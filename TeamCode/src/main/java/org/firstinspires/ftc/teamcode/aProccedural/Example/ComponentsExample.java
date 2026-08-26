@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.aProccedural.Example;
 
 
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -22,6 +23,7 @@ public class ComponentsExample {
 
     public static Servo pincer_left;
 
+    public static CRServo tes;
 
     /*
         Method to initialize components

@@ -21,6 +21,7 @@ import static org.firstinspires.ftc.teamcode.aProccedural.Example.ConstantsExamp
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.aProccedural.Input;
@@ -53,6 +54,7 @@ public class TelopExample extends OpMode {
 
             claw_tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm_tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
 
             arm_tilt.setPower(.3);
             claw_tilt.setPower(.5);
