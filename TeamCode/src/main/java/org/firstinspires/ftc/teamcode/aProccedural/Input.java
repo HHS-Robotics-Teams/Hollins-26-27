@@ -66,6 +66,10 @@ public class Input {
     public ButtonState b = new ButtonState();
     public ButtonState x = new ButtonState();
     public ButtonState y = new ButtonState();
+    public ButtonState circle = new ButtonState();
+    public ButtonState cross = new ButtonState();
+    public ButtonState square = new ButtonState();
+    public ButtonState delta = new ButtonState();
 
     public DisplacingButtonState left_trigger = new DisplacingButtonState();
     public DisplacingButtonState right_trigger = new DisplacingButtonState();
@@ -80,6 +84,13 @@ public class Input {
 
     public ButtonState back = new ButtonState();
     public ButtonState start = new ButtonState();
+    public ButtonState guide = new ButtonState();
+    public ButtonState share = new ButtonState();
+    //public ButtonState pad_Button = new ButtonState();
+    //public ButtonState home = new ButtonState();
+    public ButtonState options = new ButtonState();
+    //public ButtonState m1 = new ButtonState();
+    //public ButtonState m2 = new ButtonState();
 
     /**
      * @see #pollGamepad(Gamepad)
@@ -93,10 +104,12 @@ public class Input {
      * @param gamepad - the gamepad to scrape inputs from
      */
     public void pollGamepad(Gamepad gamepad) {
+        //logitech controller
         updateState(a, gamepad.a);
         updateState(b, gamepad.b);
         updateState(x, gamepad.x);
         updateState(y, gamepad.y);
+
 
         updateState(left_trigger, gamepad.left_trigger > 0.3, gamepad.left_trigger);
         updateState(right_trigger, gamepad.right_trigger > 0.3, gamepad.right_trigger);
@@ -111,6 +124,15 @@ public class Input {
 
         updateState(back, gamepad.back);
         updateState(start, gamepad.start);
+
+        //Rev/ps4 controller specific
+        updateState(circle, gamepad.circle);
+        updateState(cross, gamepad.cross);
+        updateState(square, gamepad.square);
+        updateState(delta, gamepad.triangle);
+
+        updateState(share, gamepad.share);
+        updateState(guide, gamepad.guide);
     }
 
     private void updateState(ButtonState state, boolean heldNow) {

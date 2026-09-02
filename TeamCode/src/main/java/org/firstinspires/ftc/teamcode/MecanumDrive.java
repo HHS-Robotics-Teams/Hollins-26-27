@@ -67,10 +67,6 @@ public final class MecanumDrive {
         public double lateralInPerTick = inPerTick;
         public double trackWidthTicks = 0;
 
-        // drive model parameters
-        public double inPerTick = 1.998; //todo
-        public double lateralInPerTick = inPerTick;
-        public double trackWidthTicks = 0; //todo
 
         // feedforward parameters (in tick units)
         public double kS = 0;
@@ -456,14 +452,14 @@ public final class MecanumDrive {
     public PoseVelocity2d updatePoseEstimate() {
         PoseVelocity2d vel = localizer.update();
         poseHistory.add(localizer.getPose());
-        
+
         while (poseHistory.size() > 100) {
             poseHistory.removeFirst();
         }
 
         estimatedPoseWriter.write(new PoseMessage(localizer.getPose()));
-        
-        
+
+
         return vel;
     }
 
