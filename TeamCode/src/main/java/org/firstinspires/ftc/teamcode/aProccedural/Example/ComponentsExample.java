@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Util.AprilTagHelper;
+
 /**
  * File to store all hardware code
  */
@@ -21,6 +23,8 @@ public class ComponentsExample {
     public static DcMotor claw_tilt;
 
     public static Servo pincer_left;
+
+    public static AprilTagHelper tagHelper;
 
 
     /*
