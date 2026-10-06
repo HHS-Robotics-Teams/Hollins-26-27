@@ -66,10 +66,10 @@ public class Input {
     public ButtonState b = new ButtonState();
     public ButtonState x = new ButtonState();
     public ButtonState y = new ButtonState();
-    public ButtonState circle = new ButtonState();
-    public ButtonState cross = new ButtonState();
-    public ButtonState square = new ButtonState();
-    public ButtonState delta = new ButtonState();
+    public ButtonState circle = new ButtonState(); // B
+    public ButtonState cross = new ButtonState(); // A
+    public ButtonState square = new ButtonState(); // X
+    public ButtonState delta = new ButtonState();  // Y
 
     public DisplacingButtonState left_trigger = new DisplacingButtonState();
     public DisplacingButtonState right_trigger = new DisplacingButtonState();
