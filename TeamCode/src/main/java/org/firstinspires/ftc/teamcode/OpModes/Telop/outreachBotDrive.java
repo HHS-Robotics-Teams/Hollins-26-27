@@ -14,6 +14,8 @@ import static org.firstinspires.ftc.teamcode.aProccedural.Constants.INTAKE_RUN;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.LAUNCHER_FAR_TARGET;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.LAUNCHER_IDLE;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.LAUNCHER_RUN;
+import static org.firstinspires.ftc.teamcode.aProccedural.Constants.LAUNCH_TICK_VELOCITY_FAR;
+import static org.firstinspires.ftc.teamcode.aProccedural.Constants.LAUNCH_TICK_VELOCITY_NEAR;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.SAFETY_HOLDING;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.SAFTEY_FIRING;
 
@@ -48,7 +50,7 @@ public class outreachBotDrive extends OpMode {
     @Override
     public void start() {
         LauncherMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        LauncherMotor.setPower(.2);
+        LauncherMotor.setVelocity(LAUNCH_TICK_VELOCITY_NEAR);
         LauncherSafetyServo.setPosition(SAFETY_HOLDING);
         INTAKE_RUN = false;
         INTAKE_LEVEL_TWO_RUN = false;
@@ -62,7 +64,8 @@ public class outreachBotDrive extends OpMode {
         /* ---------- Drivetrain ---------- */
         TeleOpDrive.run(-gamepad1.left_stick_y,gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x);
 
-        if(input.right_trigger.held()){
+        if(input.right_trigger.down()){
+            State = Launch.Spin_up;
             LAUNCHER_RUN = true;
             INTAKE_RUN = true;
             INTAKE_LEVEL_TWO_RUN = true;
@@ -71,12 +74,12 @@ public class outreachBotDrive extends OpMode {
         if (LAUNCHER_RUN){
             switch (State) {
                 case Spin_up:
-                    LauncherMotor.setPower(.8);
+                    LauncherMotor.setVelocity(LAUNCH_TICK_VELOCITY_FAR);
                     intakeTimer.reset();
                     State = Launch.LAUNCH;
                     break;
                 case LAUNCH:
-                    if (LauncherMotor.getPower()>= .75){
+                    {
                     LauncherSafetyServo.setPosition(SAFTEY_FIRING);
                     LeftSideFeedRoller.setPower(1);
                     rightSideFeedRoller.setPower(1);
@@ -86,7 +89,7 @@ public class outreachBotDrive extends OpMode {
                     }
                 case Reset:
                     if (launchTimer.seconds()>= 3){
-                        LauncherMotor.setPower(.2);
+                        LauncherMotor.setVelocity(LAUNCH_TICK_VELOCITY_NEAR);
                         LauncherSafetyServo.setPosition(SAFETY_HOLDING);
                         LeftSideFeedRoller.setPower(0);
                         rightSideFeedRoller.setPower(0);
@@ -138,6 +141,7 @@ public class outreachBotDrive extends OpMode {
         telemetry.addData("Intake running? ", INTAKE_RUN);
         telemetry.addData("Intake reversed? ", INTAKE_REVERSED);
         telemetry.addData("Launcher running? ", LAUNCHER_RUN);
+        telemetry.addData("state",State );
     }
 
     }
