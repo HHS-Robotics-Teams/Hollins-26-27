@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.OpModes.Telop;
 
 import static org.firstinspires.ftc.teamcode.aProccedural.Example.ComponentsExample.arm_tilt;
 import static org.firstinspires.ftc.teamcode.aProccedural.Example.ComponentsExample.claw_tilt;
-import static org.firstinspires.ftc.teamcode.aProccedural.Example.ComponentsExample.leftRear;
+import static org.firstinspires.ftc.teamcode.aProccedural.Example.ComponentsExample.leftBack;
 import static org.firstinspires.ftc.teamcode.aProccedural.Example.ComponentsExample.pincer_left;
-import static org.firstinspires.ftc.teamcode.aProccedural.Example.ComponentsExample.rightRear;
+import static org.firstinspires.ftc.teamcode.aProccedural.Example.ComponentsExample.rightBack;
 import static org.firstinspires.ftc.teamcode.aProccedural.Example.ConstantsExample.ClawInterval;
 import static org.firstinspires.ftc.teamcode.aProccedural.Example.ConstantsExample.TiltInterval;
 import static org.firstinspires.ftc.teamcode.aProccedural.Example.ConstantsExample.clawtiltdroppos;
@@ -91,8 +91,8 @@ public class TelopExample extends OpMode {
             double rightPower = forwardPower - turnPower;
 
             // Set power to motors
-            leftRear.setPower(leftPower);
-            rightRear.setPower(rightPower);
+            leftBack.setPower(leftPower);
+            rightBack.setPower(rightPower);
 
             //Home Position
             if (input.start.down()) {
