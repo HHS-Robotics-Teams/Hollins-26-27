@@ -6,7 +6,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 /**
- * theCube: goBILDA 5203 1:1 drive motors, no odometry pods (drive motor encoders).
+ * theCube: goBILDA 5203 19.2:1 (312 RPM) drive motors, direct drive, no odometry pods (drive motor encoders).
  * Robot config name on the Control Hub: "theCube" (or "theCube-anything").
  */
 @Config
