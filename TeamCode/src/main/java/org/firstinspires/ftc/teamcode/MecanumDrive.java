@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.*;
 import com.acmerobotics.roadrunner.AngularVelConstraint;
@@ -45,22 +44,32 @@ import org.firstinspires.ftc.teamcode.messages.DriveCommandMessage;
 import org.firstinspires.ftc.teamcode.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.teamcode.messages.MecanumLocalizerInputsMessage;
 import org.firstinspires.ftc.teamcode.messages.PoseMessage;
+import org.firstinspires.ftc.teamcode.profiles.RobotProfiles;
 
 import java.lang.Math;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-@Config
+// Params come from the robot profile matching the active config name (see profiles/RobotProfiles).
+// Tune live in FTC Dashboard under that profile's class, e.g. TheCube.
 public final class MecanumDrive {
     public static class Params {
+        // localizer: Pinpoint odometry if true, otherwise the drive motor encoders
+        public boolean usePinpoint = false;
+
+        // drive motor directions
+        public boolean reverseLeftFront = false;
+        public boolean reverseLeftBack = false;
+        public boolean reverseRightFront = false;
+        public boolean reverseRightBack = false;
+
         // IMU orientation
-        // TODO: fill in these values based on
         //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+                RevHubOrientationOnRobot.LogoFacingDirection.UP;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.UP;
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
 
         // drive model parameters
         public double inPerTick = 1;
@@ -92,20 +101,14 @@ public final class MecanumDrive {
         public double headingVelGain = 0.0; // shared with turn
     }
 
+    // set from the active robot profile each time a MecanumDrive is constructed
     public static Params PARAMS = new Params();
 
-    public final MecanumKinematics kinematics = new MecanumKinematics(
-            PARAMS.inPerTick * PARAMS.trackWidthTicks, PARAMS.inPerTick / PARAMS.lateralInPerTick);
+    public final MecanumKinematics kinematics;
 
-    public final TurnConstraints defaultTurnConstraints = new TurnConstraints(
-            PARAMS.maxAngVel, -PARAMS.maxAngAccel, PARAMS.maxAngAccel);
-    public final VelConstraint defaultVelConstraint =
-            new MinVelConstraint(Arrays.asList(
-                    kinematics.new WheelVelConstraint(PARAMS.maxWheelVel),
-                    new AngularVelConstraint(PARAMS.maxAngVel)
-            ));
-    public final AccelConstraint defaultAccelConstraint =
-            new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
+    public final TurnConstraints defaultTurnConstraints;
+    public final VelConstraint defaultVelConstraint;
+    public final AccelConstraint defaultAccelConstraint;
 
     public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
@@ -218,6 +221,21 @@ public final class MecanumDrive {
     }
 
     public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
+        PARAMS = RobotProfiles.forActiveConfig();
+
+        kinematics = new MecanumKinematics(
+                PARAMS.inPerTick * PARAMS.trackWidthTicks, PARAMS.inPerTick / PARAMS.lateralInPerTick);
+
+        defaultTurnConstraints = new TurnConstraints(
+                PARAMS.maxAngVel, -PARAMS.maxAngAccel, PARAMS.maxAngAccel);
+        defaultVelConstraint =
+                new MinVelConstraint(Arrays.asList(
+                        kinematics.new WheelVelConstraint(PARAMS.maxWheelVel),
+                        new AngularVelConstraint(PARAMS.maxAngVel)
+                ));
+        defaultAccelConstraint =
+                new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
+
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
@@ -236,9 +254,11 @@ public final class MecanumDrive {
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // TODO: verify with MecanumMotorDirectionDebugger
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        // verify with MecanumMotorDirectionDebugger
+        leftFront.setDirection(direction(PARAMS.reverseLeftFront));
+        leftBack.setDirection(direction(PARAMS.reverseLeftBack));
+        rightFront.setDirection(direction(PARAMS.reverseRightFront));
+        rightBack.setDirection(direction(PARAMS.reverseRightBack));
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
@@ -247,9 +267,17 @@ public final class MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
+        if (PARAMS.usePinpoint) {
+            localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
+        } else {
+            localizer = new DriveLocalizer(pose);
+        }
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
+    }
+
+    private static DcMotorSimple.Direction direction(boolean reversed) {
+        return reversed ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD;
     }
 
     public void setDrivePowers(PoseVelocity2d powers) {
