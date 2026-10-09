@@ -26,7 +26,7 @@ public final class TheCube {
 
         // TODO: tune the rest (see the Robot Configs doc for the order); record results here
         PARAMS.inPerTick = 0.02284; // ForwardPushTest 2026-10-09: (92 + 96) in / (3991.5 + 4238.75) ticks
-        PARAMS.lateralInPerTick = 0.02284; // placeholder until LateralPushTest
+        PARAMS.lateralInPerTick = 0.02664; // LateralPushTest 2026-10-09: 96 in / 3603.5 ticks
         PARAMS.trackWidthTicks = 0;
 
         PARAMS.kS = 0;
