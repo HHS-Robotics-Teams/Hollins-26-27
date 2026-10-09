@@ -24,10 +24,9 @@ public final class TheCube {
         PARAMS.logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
         PARAMS.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
-        // TODO: tune (see the Robot Configs doc for the order); record results here
-        //   5203 1:1 = 28 ticks per wheel rev, so inPerTick ~= pi * wheelDiameterIn / 28
-        PARAMS.inPerTick = 1;
-        PARAMS.lateralInPerTick = 1;
+        // TODO: tune the rest (see the Robot Configs doc for the order); record results here
+        PARAMS.inPerTick = 0.02305; // ForwardPushTest 2026-10-09: 92 in / 3991.5 ticks
+        PARAMS.lateralInPerTick = 0.02305; // placeholder until LateralRampLogger
         PARAMS.trackWidthTicks = 0;
 
         PARAMS.kS = 0;
