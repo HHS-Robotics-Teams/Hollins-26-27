@@ -27,10 +27,10 @@ public final class TheCube {
         // TODO: tune the rest (see the Robot Configs doc for the order); record results here
         PARAMS.inPerTick = 0.02284; // ForwardPushTest 2026-10-09: (92 + 96) in / (3991.5 + 4238.75) ticks
         PARAMS.lateralInPerTick = 0.02678; // LateralPushTest 2026-10-09: (96 + 96) in / (3603.5 + 3565.5) ticks
-        PARAMS.trackWidthTicks = 0;
+        PARAMS.trackWidthTicks = 550; // AngularRampLogger 2026-10-09, fit on 0-8 s ramp
 
-        PARAMS.kS = 0;
-        PARAMS.kV = 0;
+        PARAMS.kS = 1.62; // AngularRampLogger 2026-10-09; refine with ManualFeedforwardTuner
+        PARAMS.kV = 0.00406; // AngularRampLogger 2026-10-09; refine with ManualFeedforwardTuner
         PARAMS.kA = 0;
 
         PARAMS.axialGain = 0.0;
