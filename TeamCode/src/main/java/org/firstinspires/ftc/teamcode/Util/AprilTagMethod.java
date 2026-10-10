@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.Util;
 import static org.firstinspires.ftc.teamcode.aProccedural.Example.ComponentsExample.tagHelper;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.vision.apriltag.AprilTagClusterDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-
-import java.util.Objects;
+import org.firstinspires.ftc.vision.apriltag.AprilTagSingleDetection;
 
 public class AprilTagMethod {
 
@@ -26,9 +26,7 @@ public class AprilTagMethod {
 
             // Display telemetry for the currently detected tag
             telemetry.addLine("--- AprilTag Detected! ---");
-            telemetry.addData("Tag ID", currentTag.id);
-            // Display name if available
-            telemetry.addData("Tag Name", currentTag.metadata != null ? currentTag.metadata.name : "N/A");
+            telemetry.addData("Tag", describe(currentTag));
             telemetry.addData("X (in)", "%.2f", currentTag.ftcPose.x);
             telemetry.addData("Y (in)", "%.2f", currentTag.ftcPose.y);
             telemetry.addData("Z (in)", "%.2f", currentTag.ftcPose.z);
@@ -41,7 +39,7 @@ public class AprilTagMethod {
             if (lastDetectedTag != null) {
                 // Optionally, you can show the data of the last seen tag
                 telemetry.addLine("(Showing last known tag)");
-                telemetry.addData("Last Seen Tag ID", lastDetectedTag.id);
+                telemetry.addData("Last Seen Tag", describe(lastDetectedTag));
             }
         }
     }
@@ -64,14 +62,30 @@ public class AprilTagMethod {
     public boolean isTagVisible() {
         return tagHelper.getFirstTag() != null;
     }
+    /** True if the visible tag belongs to "RED" or "BLUE" (BIOBUZZ cluster names start with the color). */
     public boolean tagMatchesAlliance(String allianceColor){
-        if(!isTagVisible()){
-            return false;
+        AprilTagDetection tag = tagHelper.getFirstTag();
+        return tag != null && name(tag).startsWith(allianceColor);
+    }
+
+    /**
+     * SDK 12 returns either a single tag or a cluster (BIOBUZZ CELLS carry 4-tag clusters named
+     * "RED SCORING", "RED AUDIENCE", "BLUE AUDIENCE", "BLUE SCORING").
+     */
+    public static String name(AprilTagDetection detection) {
+        if (detection instanceof AprilTagClusterDetection) {
+            return ((AprilTagClusterDetection) detection).metadata.name;
         }
-        if(Objects.equals(allianceColor, "RED") && tagHelper.getFirstTag().metadata.id == 24){
-            return true;
+        AprilTagSingleDetection single = (AprilTagSingleDetection) detection;
+        return single.metadata != null ? single.metadata.name : "Unknown";
+    }
+
+    public static String describe(AprilTagDetection detection) {
+        if (detection instanceof AprilTagClusterDetection) {
+            AprilTagClusterDetection cluster = (AprilTagClusterDetection) detection;
+            return "Cluster " + cluster.metadata.name + " (" + cluster.percentClusterFound + "% seen)";
         }
-        return Objects.equals(allianceColor, "BLUE") && tagHelper.getFirstTag().metadata.id == 20;
+        return "ID " + ((AprilTagSingleDetection) detection).id + " " + name(detection);
     }
     public double getTagDistance() { return tagHelper.getFirstTag().ftcPose.range;}
     public double getTagBearing() {return tagHelper.getFirstTag().ftcPose.bearing;}
