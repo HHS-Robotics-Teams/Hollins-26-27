@@ -1,10 +1,16 @@
 package org.firstinspires.ftc.meepmeep;
 
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
+import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
+import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
+
+import org.firstinspires.ftc.teamcode.field.Alliance;
+import org.firstinspires.ftc.teamcode.field.FieldPositions;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,9 +19,9 @@ import javax.imageio.ImageIO;
 
 /**
  * Plan Road Runner paths on a desktop field before running them on the robot.
- * Field coordinates are inches with (0, 0) at the field center; heading 0 faces +x.
+ * Field frame and named positions: TeamCode/.../field/FieldPositions.java (shared with the robot code).
  *
- * To use this season's field, save a top-down field image as MeepMeepTesting/field.png.
+ * Background: MeepMeepTesting/field.png (BIOBUZZ, drawn from the red alliance station).
  */
 public class MeepMeepTesting {
     // theCube constraints; keep in sync with TeamCode/.../profiles/TheCube.java
@@ -28,24 +34,37 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
-        RoadRunnerBotEntity theCube = new DefaultBotBuilder(meepMeep)
-                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
-                .setDimensions(18, 18)
-                .build();
-
-        // Example path: replace with your autonomous routine
-        theCube.runAction(theCube.getDrive().actionBuilder(new Pose2d(-36, -60, Math.toRadians(90)))
-                .lineToY(-36)
-                .strafeTo(new Vector2d(0, -36))
-                .turn(Math.toRadians(90))
-                .splineTo(new Vector2d(36, 0), Math.toRadians(90))
-                .build());
-
         setBackground(meepMeep);
         meepMeep.setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-                .addEntity(theCube)
+                .addEntity(bot(meepMeep, Alliance.RED))
+                .addEntity(bot(meepMeep, Alliance.BLUE))
                 .start();
+    }
+
+    private static RoadRunnerBotEntity bot(MeepMeep meepMeep, Alliance alliance) {
+        RoadRunnerBotEntity bot = new DefaultBotBuilder(meepMeep)
+                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
+                .setDimensions(18, 18)
+                .setColorScheme(alliance == Alliance.RED ? new ColorSchemeRedDark() : new ColorSchemeBlueDark())
+                .build();
+        bot.runAction(exampleAuto(bot, alliance));
+        return bot;
+    }
+
+    // Example AUTO, written for red and mirrored for blue: replace with your routine.
+    // Drive out, face the up CELL, LAUNCH the 4 pre-loaded POLLEN, then PARK in the LOADING ZONE.
+    private static Action exampleAuto(RoadRunnerBotEntity bot, Alliance alliance) {
+        Vector2d launchSpot = new Vector2d(0, -40);
+        double aim = FieldPositions.headingTo(launchSpot, FieldPositions.CELL_START_UP);
+        Pose2d launchPose = alliance.pose(new Pose2d(launchSpot, aim));
+
+        return bot.getDrive().actionBuilder(alliance.pose(FieldPositions.START_ALLIANCE_WALL))
+                .strafeToLinearHeading(launchPose.position, launchPose.heading)
+                .waitSeconds(2) // LAUNCH
+                .strafeToLinearHeading(alliance.pose(FieldPositions.PARK_LOADING_ZONE).position,
+                        alliance.pose(FieldPositions.PARK_LOADING_ZONE).heading)
+                .build();
     }
 
     private static void setBackground(MeepMeep meepMeep) {

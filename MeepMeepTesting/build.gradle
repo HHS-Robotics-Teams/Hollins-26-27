@@ -18,6 +18,17 @@ repositories {
     }
 }
 
+// Share the field-position classes with TeamCode so routes use the same numbers as the robot
+sourceSets {
+    main {
+        java {
+            srcDir '../TeamCode/src/main/java'
+            include 'org/firstinspires/ftc/meepmeep/**'
+            include 'org/firstinspires/ftc/teamcode/field/**'
+        }
+    }
+}
+
 dependencies {
     implementation 'com.acmerobotics.roadrunner:MeepMeep:0.1.7'
 }
