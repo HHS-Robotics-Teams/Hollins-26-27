@@ -53,6 +53,8 @@ public final class FieldPositions {
     public static final Pose2d START_ALLIANCE_WALL = new Pose2d(0, -WALL + ROBOT_HALF, Math.toRadians(90));
     /** Against the audience wall, red half, facing the far wall. */
     public static final Pose2d START_AUDIENCE_WALL = new Pose2d(WALL - ROBOT_HALF, -36, Math.toRadians(180));
+    /** Against the audience wall in line with the up CELL, facing it. Both CELLS sit on this line. */
+    public static final Pose2d START_FACING_UP_CELL = new Pose2d(WALL - ROBOT_HALF, -13, Math.toRadians(180));
     /** Against the far wall, red half, between the LOADING ZONE and the far-wall FLOWER, facing the audience. */
     public static final Pose2d START_FAR_WALL = new Pose2d(-WALL + ROBOT_HALF, -48, Math.toRadians(0));
 

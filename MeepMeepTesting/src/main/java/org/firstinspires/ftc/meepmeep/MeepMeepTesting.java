@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.meepmeep;
 
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
@@ -10,7 +9,7 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 import org.firstinspires.ftc.teamcode.field.Alliance;
-import org.firstinspires.ftc.teamcode.field.FieldPositions;
+import org.firstinspires.ftc.teamcode.field.AutoPaths;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,23 +47,11 @@ public class MeepMeepTesting {
                 .setDimensions(18, 18)
                 .setColorScheme(alliance == Alliance.RED ? new ColorSchemeRedDark() : new ColorSchemeBlueDark())
                 .build();
-        bot.runAction(exampleAuto(bot, alliance));
+        // Mechanism timings are guesses until the launcher and intake exist
+        Action launch = new SleepAction(3);
+        Action intake = new SleepAction(1.5);
+        bot.runAction(AutoPaths.hiveSide(bot.getDrive()::actionBuilder, alliance, launch, intake));
         return bot;
-    }
-
-    // Example AUTO, written for red and mirrored for blue: replace with your routine.
-    // Drive out, face the up CELL, LAUNCH the 4 pre-loaded POLLEN, then PARK in the LOADING ZONE.
-    private static Action exampleAuto(RoadRunnerBotEntity bot, Alliance alliance) {
-        Vector2d launchSpot = new Vector2d(0, -40);
-        double aim = FieldPositions.headingTo(launchSpot, FieldPositions.CELL_START_UP);
-        Pose2d launchPose = alliance.pose(new Pose2d(launchSpot, aim));
-
-        return bot.getDrive().actionBuilder(alliance.pose(FieldPositions.START_ALLIANCE_WALL))
-                .strafeToLinearHeading(launchPose.position, launchPose.heading)
-                .waitSeconds(2) // LAUNCH
-                .strafeToLinearHeading(alliance.pose(FieldPositions.PARK_LOADING_ZONE).position,
-                        alliance.pose(FieldPositions.PARK_LOADING_ZONE).heading)
-                .build();
     }
 
     private static void setBackground(MeepMeep meepMeep) {
