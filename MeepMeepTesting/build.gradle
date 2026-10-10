@@ -1,0 +1,27 @@
+// Desktop-only path visualizer for Road Runner. Not part of the robot app.
+// Run: click the green arrow next to main() in MeepMeepTesting.java,
+//   or ./gradlew :MeepMeepTesting:run
+plugins {
+    id 'java'
+    id 'application'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url = 'https://maven.brott.dev/'
+    }
+}
+
+dependencies {
+    implementation 'com.acmerobotics.roadrunner:MeepMeep:0.1.7'
+}
+
+application {
+    mainClass = 'org.firstinspires.ftc.meepmeep.MeepMeepTesting'
+}
