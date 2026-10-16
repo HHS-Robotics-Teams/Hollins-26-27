@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode.profiles;
+package org.firstinspires.ftc.teamcode.robots.nerdvana;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.field.RouteTuning;
+import org.firstinspires.ftc.teamcode.robots.Robot;
 
 /**
  * nerdvana (15006): goBILDA Pinpoint with 2 odometry pods. Drive motor type not recorded yet.
@@ -12,8 +14,12 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 @Config
 public final class Nerdvana {
     public static final String CONFIG_NAME = "nerdvana";
+    public static final String TAG = "nerd";
 
     public static MecanumDrive.Params PARAMS = new MecanumDrive.Params();
+
+    // route geometry (shared with MeepMeep in NerdRoute); tune live in Dashboard under Nerdvana.ROUTE
+    public static RouteTuning ROUTE = NerdRoute.TUNING;
 
     static {
         PARAMS.usePinpoint = true;
@@ -47,6 +53,8 @@ public final class Nerdvana {
         PARAMS.lateralVelGain = 0.0;
         PARAMS.headingVelGain = 0.0;
     }
+
+    public static final Robot ROBOT = new Robot(CONFIG_NAME, TAG, PARAMS, ROUTE, NerdMechanisms::new, NerdAutos.APPROVED);
 
     private Nerdvana() {}
 }

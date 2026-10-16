@@ -44,14 +44,14 @@ import org.firstinspires.ftc.teamcode.messages.DriveCommandMessage;
 import org.firstinspires.ftc.teamcode.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.teamcode.messages.MecanumLocalizerInputsMessage;
 import org.firstinspires.ftc.teamcode.messages.PoseMessage;
-import org.firstinspires.ftc.teamcode.profiles.RobotProfiles;
+import org.firstinspires.ftc.teamcode.robots.RobotProfiles;
 
 import java.lang.Math;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-// Params come from the robot profile matching the active config name (see profiles/RobotProfiles).
+// Params come from the robot profile matching the active config name (see robots/RobotProfiles).
 // Tune live in FTC Dashboard under that profile's class, e.g. TheCube.
 public final class MecanumDrive {
     public static class Params {
@@ -230,7 +230,7 @@ public final class MecanumDrive {
     }
 
     public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
-        PARAMS = RobotProfiles.forActiveConfig();
+        PARAMS = RobotProfiles.forActiveConfig().drive;
 
         kinematics = new MecanumKinematics(
                 PARAMS.inPerTick * PARAMS.trackWidthTicks, PARAMS.inPerTick / PARAMS.lateralInPerTick);

@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode.profiles;
+package org.firstinspires.ftc.teamcode.robots.thecube;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.field.RouteTuning;
+import org.firstinspires.ftc.teamcode.robots.Robot;
 
 /**
  * theCube: goBILDA 5203 19.2:1 (312 RPM) drive motors, direct drive, no odometry pods (drive motor encoders).
@@ -12,8 +14,12 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 @Config
 public final class TheCube {
     public static final String CONFIG_NAME = "theCube";
+    public static final String TAG = "cube";
 
     public static MecanumDrive.Params PARAMS = new MecanumDrive.Params();
+
+    // route geometry (shared with MeepMeep in CubeRoute); tune live in Dashboard under TheCube.ROUTE
+    public static RouteTuning ROUTE = CubeRoute.TUNING;
 
     static {
         PARAMS.usePinpoint = false;
@@ -41,6 +47,8 @@ public final class TheCube {
         PARAMS.lateralVelGain = 0.0;
         PARAMS.headingVelGain = 0.0;
     }
+
+    public static final Robot ROBOT = new Robot(CONFIG_NAME, TAG, PARAMS, ROUTE, CubeMechanisms::new, CubeAutos.APPROVED);
 
     private TheCube() {}
 }

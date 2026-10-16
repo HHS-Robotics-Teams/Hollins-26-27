@@ -9,7 +9,11 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 import org.firstinspires.ftc.teamcode.field.Alliance;
-import org.firstinspires.ftc.teamcode.field.AutoPaths;
+import org.firstinspires.ftc.teamcode.field.Mechanisms;
+import org.firstinspires.ftc.teamcode.field.RouteTuning;
+import org.firstinspires.ftc.teamcode.field.Routes;
+import org.firstinspires.ftc.teamcode.robots.nerdvana.NerdRoute;
+import org.firstinspires.ftc.teamcode.robots.thecube.CubeRoute;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,12 +22,17 @@ import javax.imageio.ImageIO;
 
 /**
  * Plan Road Runner paths on a desktop field before running them on the robot.
- * Field frame and named positions: TeamCode/.../field/FieldPositions.java (shared with the robot code).
+ * Routes: TeamCode/.../field/Routes.java (the same code the robot runs).
+ * Robots: TeamCode/.../robots/<robot>/<Tag>Route.java (size, intake sides, launcher).
  *
  * Background: MeepMeepTesting/field.png (BIOBUZZ, drawn from the red alliance station).
  */
 public class MeepMeepTesting {
-    // theCube constraints; keep in sync with TeamCode/.../profiles/TheCube.java
+    // ---- what to simulate ----
+    static final Routes ROUTE = Routes.HIVE_SIDE;
+    static final RouteTuning ROBOT = NerdRoute.TUNING; // or CubeRoute.TUNING
+
+    // drive constraints (theCube); keep in sync with TeamCode/.../robots/thecube/TheCube.java
     static final double MAX_VEL = 50;               // maxWheelVel, in/s
     static final double MAX_ACCEL = 50;             // maxProfileAccel, in/s^2
     static final double MAX_ANG_VEL = Math.PI;      // maxAngVel, rad/s
@@ -44,14 +53,35 @@ public class MeepMeepTesting {
     private static RoadRunnerBotEntity bot(MeepMeep meepMeep, Alliance alliance) {
         RoadRunnerBotEntity bot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
-                .setDimensions(18, 18)
+                .setDimensions(ROBOT.width, ROBOT.length)
                 .setColorScheme(alliance == Alliance.RED ? new ColorSchemeRedDark() : new ColorSchemeBlueDark())
                 .build();
-        // Mechanism timings are guesses until the launcher and intake exist
-        Action launch = new SleepAction(3);
-        Action intake = new SleepAction(1.5);
-        bot.runAction(AutoPaths.hiveSide(bot.getDrive()::actionBuilder, alliance, launch, intake));
+        bot.runAction(ROUTE.route.build(bot.getDrive()::actionBuilder, alliance, ROBOT, new SimMechanisms(ROBOT)));
         return bot;
+    }
+
+    /** Mechanism actions as pauses of the robot's estimated durations. */
+    private static final class SimMechanisms implements Mechanisms {
+        private final RouteTuning tuning;
+
+        SimMechanisms(RouteTuning tuning) {
+            this.tuning = tuning;
+        }
+
+        @Override
+        public Action launch(double aimDegrees) {
+            return new SleepAction(tuning.simLaunchSeconds);
+        }
+
+        @Override
+        public Action intake(int side) {
+            return new SleepAction(tuning.simIntakeSeconds);
+        }
+
+        @Override
+        public String describe() {
+            return "SimMechanisms";
+        }
     }
 
     private static void setBackground(MeepMeep meepMeep) {

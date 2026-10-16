@@ -25,6 +25,8 @@ sourceSets {
             srcDir '../TeamCode/src/main/java'
             include 'org/firstinspires/ftc/meepmeep/**'
             include 'org/firstinspires/ftc/teamcode/field/**'
+            // each robot's route tuning (hardware-free), so MeepMeep simulates the real robots
+            include 'org/firstinspires/ftc/teamcode/robots/*/*Route.java'
         }
     }
 }
