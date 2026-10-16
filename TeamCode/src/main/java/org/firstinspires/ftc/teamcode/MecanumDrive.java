@@ -58,6 +58,12 @@ public final class MecanumDrive {
         // localizer: Pinpoint odometry if true, otherwise the drive motor encoders
         public boolean usePinpoint = false;
 
+        // Pinpoint pods (only used when usePinpoint is true)
+        public double pinpointParYTicks = 0.0; // y position of the parallel pod (in tick units)
+        public double pinpointPerpXTicks = 0.0; // x position of the perpendicular pod (in tick units)
+        public boolean reversePinpointPar = false;
+        public boolean reversePinpointPerp = false;
+
         // drive motor directions
         public boolean reverseLeftFront = false;
         public boolean reverseLeftBack = false;
@@ -271,7 +277,7 @@ public final class MecanumDrive {
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         if (PARAMS.usePinpoint) {
-            localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
+            localizer = new PinpointLocalizer(hardwareMap, PARAMS, pose);
         } else {
             localizer = new DriveLocalizer(pose);
         }

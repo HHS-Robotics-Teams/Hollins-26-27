@@ -20,6 +20,7 @@ public final class RobotProfiles {
 
     static {
         PROFILES.put(TheCube.CONFIG_NAME, TheCube.PARAMS);
+        PROFILES.put(Nerdvana.CONFIG_NAME, Nerdvana.PARAMS);
     }
 
     private RobotProfiles() {}

@@ -22,8 +22,8 @@ public class Components {
         //Initialize Drive Motors
         frontLeft = hardwareMap.get(DcMotor.class, "leftFront");
         frontRight = hardwareMap.get(DcMotor.class, "rightFront");
-        backLeft = hardwareMap.get(DcMotor.class, "leftRear");
-        backRight = hardwareMap.get(DcMotor.class, "rightRear");
+        backLeft = hardwareMap.get(DcMotor.class, "leftBack");
+        backRight = hardwareMap.get(DcMotor.class, "rightBack");
 
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
