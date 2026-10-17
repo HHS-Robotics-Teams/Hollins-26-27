@@ -1,0 +1,40 @@
+// Desktop-only path visualizer for Road Runner. Not part of the robot app.
+// Run: click the green arrow next to main() in MeepMeepTesting.java,
+//   or ./gradlew :MeepMeepTesting:run
+plugins {
+    id 'java'
+    id 'application'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url = 'https://maven.brott.dev/'
+    }
+}
+
+// Share the field-position classes with TeamCode so routes use the same numbers as the robot
+sourceSets {
+    main {
+        java {
+            srcDir '../TeamCode/src/main/java'
+            include 'org/firstinspires/ftc/meepmeep/**'
+            include 'org/firstinspires/ftc/teamcode/field/**'
+            // each robot's route tuning (hardware-free), so MeepMeep simulates the real robots
+            include 'org/firstinspires/ftc/teamcode/robots/*/*Route.java'
+        }
+    }
+}
+
+dependencies {
+    implementation 'com.acmerobotics.roadrunner:MeepMeep:0.1.7'
+}
+
+application {
+    mainClass = 'org.firstinspires.ftc.meepmeep.MeepMeepTesting'
+}
