@@ -34,10 +34,10 @@ public class Components {
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Initialize Turret motor
-        turret = hardwareMap.get(DcMotor.class, "turret");
-        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        turret.setDirection(DcMotorSimple.Direction.REVERSE);
+//        turret = hardwareMap.get(DcMotor.class, "turret");
+//        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        turret.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Initialize Launcher motor
         launcher = hardwareMap.get(DcMotor.class, "launcher");
@@ -46,16 +46,18 @@ public class Components {
         launcher.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Initialize intake motor
-        intakeFront = hardwareMap.get(DcMotor.class, "intakeFront");
+        intakeFront = hardwareMap.get(DcMotor.class, "intakefront");
         intakeFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intakeFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intakeFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeFront.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Initialize Feed Rollers
-        leftFeedRoller= hardwareMap.get(CRServo.class,"leftRoller");
-        rightFeedRoller = hardwareMap.get(CRServo.class, "rightRoller");
-        kicker = hardwareMap.get(CRServo.class,"kicker");
-
+        leftFeedRoller= hardwareMap.get(CRServo.class,"leftroller");
+        rightFeedRoller = hardwareMap.get(CRServo.class, "rightroller");
         leftFeedRoller.setDirection(DcMotorSimple.Direction.REVERSE);
+        kicker = hardwareMap.get(CRServo.class,"kicker");
+        kicker.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFeedRoller.setDirection(DcMotorSimple.Direction.REVERSE);
+
     }
 }
