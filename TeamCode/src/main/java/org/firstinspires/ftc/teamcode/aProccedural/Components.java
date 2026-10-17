@@ -2,7 +2,10 @@ package org.firstinspires.ftc.teamcode.aProccedural;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import java.util.Base64;
 
 public class Components {
     public static DcMotor frontLeftWheelMotor;
@@ -11,6 +14,7 @@ public class Components {
     public static DcMotor backRightWheelMotor;
     public static DcMotor intakeMotor;
     public static DcMotor launcherMotor;
+    private static DigitalChannel odometryPod;
 
     public static void initComponents(HardwareMap hardwareMap) {
         frontLeftWheelMotor = hardwareMap.get(DcMotor.class, "frontLeftWheelMotor");
@@ -19,6 +23,7 @@ public class Components {
         backRightWheelMotor = hardwareMap.get(DcMotor.class, "backRightWheelMotor");
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
         launcherMotor = hardwareMap.get(DcMotor.class, "launcherMotor");
+        odometryPod = hardwareMap.get(DigitalChannel.class, "odometryPod");
 
         frontLeftWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRightWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
