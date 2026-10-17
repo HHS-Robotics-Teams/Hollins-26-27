@@ -20,10 +20,10 @@ public class Components {
 
     public static void initComponents(HardwareMap hardwareMap) {
         //Initialize Drive Motors
-        frontLeft = hardwareMap.get(DcMotor.class, "leftFront");
-        frontRight = hardwareMap.get(DcMotor.class, "rightFront");
-        backLeft = hardwareMap.get(DcMotor.class, "leftRear");
-        backRight = hardwareMap.get(DcMotor.class, "rightRear");
+        frontLeft = hardwareMap.get(DcMotor.class, "frontleft");
+        frontRight = hardwareMap.get(DcMotor.class, "frontright");
+        backLeft = hardwareMap.get(DcMotor.class, "backleft");
+        backRight = hardwareMap.get(DcMotor.class, "backright");
 
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

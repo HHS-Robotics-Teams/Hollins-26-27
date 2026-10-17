@@ -86,11 +86,11 @@ public class Input {
     public ButtonState start = new ButtonState();
     public ButtonState guide = new ButtonState();
     public ButtonState share = new ButtonState();
-    //public ButtonState pad_Button = new ButtonState();
-    //public ButtonState home = new ButtonState();
+    public ButtonState pad_Button = new ButtonState();
+    public ButtonState home = new ButtonState();
     public ButtonState options = new ButtonState();
-    //public ButtonState m1 = new ButtonState();
-    //public ButtonState m2 = new ButtonState();
+    public ButtonState m1 = new ButtonState();
+    public ButtonState m2 = new ButtonState();
 
     /**
      * @see #pollGamepad(Gamepad)
