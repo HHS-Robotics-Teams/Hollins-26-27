@@ -4,10 +4,11 @@ import static org.firstinspires.ftc.teamcode.aProccedural.Components.Conveyor;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.Intake;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.Kicker;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.Launcher;
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.backLeftDrive;
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.backRightDrive;
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.frontLeftDrive;
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.frontRightDrive;
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.backLeft;
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.backRight;
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.frontLeft;
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.frontRight;
+
 
 
 
@@ -48,10 +49,10 @@ public class MecanumTest extends OpMode {
 
 
 
-        frontLeftDrive.setPower(y + x + rx);
-        backLeftDrive.setPower(y - x + rx);
-        frontRightDrive.setPower(y - x - rx);
-        backRightDrive.setPower(y + x - rx);
+        frontLeft.setPower(y + x + rx);
+        backLeft.setPower(y - x + rx);
+        frontRight.setPower(y - x - rx);
+        backRight.setPower(y + x - rx);
         //Launcher.setPower(.75);
 
 
