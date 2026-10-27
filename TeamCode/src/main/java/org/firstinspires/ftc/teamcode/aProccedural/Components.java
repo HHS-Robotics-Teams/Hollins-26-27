@@ -7,50 +7,58 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Components {
-    public static DcMotor leftFront;
-    public static DcMotor rightFront;
-    public static DcMotor leftRear;
-    public static DcMotor rightRear;
+    public static DcMotor frontLeft;
+    public static DcMotor frontRight;
+    public static DcMotor backLeft;
+    public static DcMotor backRight;
+    public static DcMotor turret;
+    public static DcMotor launcher;
     public static DcMotor intakeFront;
-    public static CRServo servoFeedLeft1;
-    public static CRServo servoFeedRight1;
-    public static CRServo servoFeedLeft2;
-    public static CRServo servoFeedRight2;
-    public static DcMotor intakeRear;
-    public static DcMotor spindexer;
+    public static CRServo leftFeedRoller;
+    public static CRServo rightFeedRoller;
+    public static CRServo kicker;
     public static Servo flowerFront;
     public static Servo shootingServo;
 
+
     public static void initComponents(HardwareMap hardwareMap) {
-        leftFront = hardwareMap.get(DcMotor.class, "leftfront");
-        rightFront = hardwareMap.get(DcMotor.class, "rightfront");
-        leftRear = hardwareMap.get(DcMotor.class, "leftrear");
-        rightRear = hardwareMap.get(DcMotor.class, "rightrear");
+        //Initialize Drive Motors
+        frontLeft = hardwareMap.get(DcMotor.class, "leftFront");
+        frontRight = hardwareMap.get(DcMotor.class, "rightFront");
+        backLeft = hardwareMap.get(DcMotor.class, "leftBack");
+        backRight = hardwareMap.get(DcMotor.class, "rightBack");
 
-        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        intakeFront= hardwareMap.get(DcMotor.class,"intakefront");
-        intakeFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        //Initialize Turret motor
+        turret = hardwareMap.get(DcMotor.class, "turret");
+        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        turret.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // Initialize Launcher motor
+        launcher = hardwareMap.get(DcMotor.class, "launcher");
+        launcher.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        launcher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        launcher.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // Initialize intake motor
+        intakeFront = hardwareMap.get(DcMotor.class, "intakeFront");
         intakeFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        servoFeedLeft1= hardwareMap.get(CRServo.class, "servofeedleft1");
-        servoFeedLeft1.setDirection(CRServo.Direction.REVERSE);
+        // Initialize Feed Rollers
+        leftFeedRoller= hardwareMap.get(CRServo.class,"leftRoller");
+        rightFeedRoller = hardwareMap.get(CRServo.class, "rightRoller");
+        kicker = hardwareMap.get(CRServo.class,"kicker");
 
-        servoFeedRight1= hardwareMap.get(CRServo.class, "servofeedright1");
-        servoFeedRight1.setDirection(CRServo.Direction.REVERSE);
-
-        servoFeedLeft2= hardwareMap.get(CRServo.class, "servofeedleft2");
-        servoFeedLeft2.setDirection(CRServo.Direction.REVERSE);
-
-        servoFeedRight2= hardwareMap.get(CRServo.class, "servofeedright2");
-        servoFeedRight2.setDirection(CRServo.Direction.REVERSE);
-
-
+        leftFeedRoller.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 }
