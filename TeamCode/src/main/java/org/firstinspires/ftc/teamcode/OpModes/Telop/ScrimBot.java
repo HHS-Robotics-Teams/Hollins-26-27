@@ -62,6 +62,14 @@ public class ScrimBot extends OpMode {
             INTAKE_FEED_ROLLERS = true;
         }
         // Turret Controls
+        if ((input.left_bumper.Held) && turret.getCurrentPosition()>= turret_Backwards_Pos){
+            turret.setTargetPosition(turret.getCurrentPosition()-100);
+
+        }
+        if ((input.right_bumper.Held) && turret.getCurrentPosition()>= (turret_Backwards_Pos- 5)){
+            turret.setTargetPosition(turret.getCurrentPosition() + 100);
+
+        }
         if(input.dpad_up.down()){
             turret.setTargetPosition(turret_Forward_Pos);
         }

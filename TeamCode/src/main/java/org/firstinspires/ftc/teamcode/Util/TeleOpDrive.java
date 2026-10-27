@@ -23,7 +23,7 @@ public class TeleOpDrive {
         }
 
         //Power fixer
-        double denominator = max((abs(forward) + abs(strafes) + abs(rotates)), 1.75);
+        double denominator = max((abs(forward) + abs(strafes) + abs(rotates)), 1);
 
         //Setting Powers
         leftFront.setPower((forward + strafes + rotates) / denominator);
