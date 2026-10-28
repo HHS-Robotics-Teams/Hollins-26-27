@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.aProccedural;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -11,7 +12,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
             public static DcMotor backLeft;
             public static DcMotor backRight;
             public static DcMotor turret;
-            public static DcMotor launcher;
+
+            public static DcMotorEx launcher;
             public static DcMotor intakeFront;
             public static CRServo leftFeedRoller;
             public static CRServo rightFeedRoller;
@@ -40,8 +42,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
                 turret.setDirection(DcMotorSimple.Direction.REVERSE);
 
                 // Initialize Launcher motor
-                launcher = hardwareMap.get(DcMotor.class, "launcher");
-                launcher.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                launcher = hardwareMap.get(DcMotorEx.class, "launcher");
+                launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 launcher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 launcher.setDirection(DcMotorSimple.Direction.REVERSE);
 

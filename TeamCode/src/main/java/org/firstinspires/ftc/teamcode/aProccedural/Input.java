@@ -136,6 +136,7 @@ public class Input {
     }
 
     private void updateState(ButtonState state, boolean heldNow) {
+        state.Held = heldNow;
         if (heldNow) {
             state.numTicksHeld++;
             state.numTicksReleased = -1;

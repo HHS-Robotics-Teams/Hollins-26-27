@@ -11,7 +11,7 @@ import static org.firstinspires.ftc.teamcode.aProccedural.Constants.INTAKE_RUN;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.LAUNCHING;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.apply_Powers;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.intake_Power;
-import static org.firstinspires.ftc.teamcode.aProccedural.Constants.launching_Power;
+import static org.firstinspires.ftc.teamcode.aProccedural.Constants.launcher_Launching_Velocity;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.turret_Backwards_Pos;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.turret_Forward_Pos;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.turret_Left_Pos;
@@ -57,7 +57,7 @@ public class ScrimBot extends OpMode {
             LAUNCHING = true;
         }
         if (LAUNCHING){
-            launcher.setPower(launching_Power);
+            launcher.setVelocity(launcher_Launching_Velocity);
             INTAKE_RUN = true;
             INTAKE_FEED_ROLLERS = true;
         }

@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -18,7 +19,7 @@ import org.firstinspires.ftc.teamcode.field.Mechanisms;
  */
 @Config
 public final class NerdMechanisms implements Mechanisms {
-    public static double LAUNCH_POWER = 1.0; // Constants.launching_Power
+    public static double LAUNCH_VELOCITY = 2000.0; // Constants.launcher_Launching_Velocity
     public static double SPIN_UP_SECONDS = 1.0;
     public static double FEED_SECONDS = 2.0;
     public static double INTAKE_POWER = 1.0;
@@ -27,12 +28,13 @@ public final class NerdMechanisms implements Mechanisms {
     // TODO: measure (TurretPositionFinder), then set NerdRoute launchArc; 0 keeps the turret forward
     public static double TURRET_TICKS_PER_DEGREE = 0;
 
-    private final DcMotor launcher, intakeFront, turret;
+    private final DcMotorEx launcher;
+    private final DcMotor intakeFront, turret;
     private final CRServo leftRoller, rightRoller, kicker;
 
     public NerdMechanisms(HardwareMap hardwareMap) {
-        launcher = hardwareMap.get(DcMotor.class, "launcher");
-        launcher.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        launcher = hardwareMap.get(DcMotorEx.class, "launcher");
+        launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         launcher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         launcher.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -61,14 +63,14 @@ public final class NerdMechanisms implements Mechanisms {
                 new InstantAction(() -> {
                     turret.setTargetPosition((int) Math.round(aimDegrees * TURRET_TICKS_PER_DEGREE));
                     turret.setPower(TURRET_POWER);
-                    launcher.setPower(LAUNCH_POWER);
+                    launcher.setVelocity(LAUNCH_VELOCITY);
                 }),
                 new SleepAction(SPIN_UP_SECONDS),
                 new InstantAction(() -> feed(1)),
                 new SleepAction(FEED_SECONDS),
                 new InstantAction(() -> {
                     feed(0);
-                    launcher.setPower(0);
+                    launcher.setVelocity(0);
                 }));
     }
 

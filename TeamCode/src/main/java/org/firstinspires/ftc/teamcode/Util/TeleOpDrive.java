@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.Util;
 
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.frontLeft;
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.frontRight;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.backLeft;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.backRight;
-import static org.firstinspires.ftc.teamcode.aProccedural.Example.ComponentsExample.leftFront;
-import static org.firstinspires.ftc.teamcode.aProccedural.Example.ComponentsExample.rightFront;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
@@ -26,8 +26,8 @@ public class TeleOpDrive {
         double denominator = max((abs(forward) + abs(strafes) + abs(rotates)), 1);
 
         //Setting Powers
-        leftFront.setPower((forward + strafes + rotates) / denominator);
-        rightFront.setPower((forward - strafes - rotates) / denominator);
+        frontLeft.setPower((forward + strafes + rotates) / denominator);
+        frontRight.setPower((forward - strafes - rotates) / denominator);
         backLeft.setPower((forward - strafes + rotates) / denominator);
         backRight.setPower((forward + strafes - rotates) / denominator);
     }
