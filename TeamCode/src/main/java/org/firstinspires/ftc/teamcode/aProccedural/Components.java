@@ -5,8 +5,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
-        public class Components {
+public class Components {
             public static DcMotor frontLeft;
             public static DcMotor frontRight;
             public static DcMotor backLeft;
@@ -17,7 +18,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
             public static DcMotor intakeFront;
             public static CRServo leftFeedRoller;
             public static CRServo rightFeedRoller;
-            public static CRServo kicker;
+            public static Servo kicker;
+            public static CRServo counterRoller;
 
 
             public static void initComponents(HardwareMap hardwareMap) {
@@ -56,8 +58,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
                 // Initialize Feed Rollers
                 leftFeedRoller = hardwareMap.get(CRServo.class, "leftRoller");
                 rightFeedRoller = hardwareMap.get(CRServo.class, "rightRoller");
-                kicker = hardwareMap.get(CRServo.class, "kicker");
+                kicker = hardwareMap.get(Servo.class, "kicker");
 
                 leftFeedRoller.setDirection(DcMotorSimple.Direction.REVERSE);
+
+                // Initialize counter roller
+                counterRoller = hardwareMap.get(CRServo.class, "counterRoller");
+                counterRoller.setDirection(DcMotorSimple.Direction.FORWARD);
             }
         }

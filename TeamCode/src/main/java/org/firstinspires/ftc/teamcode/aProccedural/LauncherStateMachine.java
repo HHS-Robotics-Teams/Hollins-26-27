@@ -61,7 +61,7 @@ public class LauncherStateMachine {
                 intakeFront.setPower(0);
                 leftFeedRoller.setPower(0);
                 rightFeedRoller.setPower(0);
-                kicker.setPower(0);
+                kicker.setPosition(0.0);
 
                 turret.setTargetPosition(turretTargetPosition);
                 turret.setPower(turret_Power);
@@ -73,7 +73,7 @@ public class LauncherStateMachine {
                 intakeFront.setPower(dir * intake_Power);
                 leftFeedRoller.setPower(dir * feed_Roller_Power);
                 rightFeedRoller.setPower(dir * feed_Roller_Power);
-                kicker.setPower(dir * feed_Roller_Power);
+                kicker.setPosition(intakeReversed ? 0.0 : 1.0);
 
                 turret.setTargetPosition(turretTargetPosition);
                 turret.setPower(turret_Power);
@@ -84,7 +84,7 @@ public class LauncherStateMachine {
                 intakeFront.setPower(0);
                 leftFeedRoller.setPower(0);
                 rightFeedRoller.setPower(0);
-                kicker.setPower(0);
+                kicker.setPosition(0.0);
 
                 turret.setTargetPosition(turretTargetPosition);
                 turret.setPower(turret_Power);
@@ -95,7 +95,7 @@ public class LauncherStateMachine {
                 intakeFront.setPower(0);
                 leftFeedRoller.setPower(0);
                 rightFeedRoller.setPower(0);
-                kicker.setPower(0);
+                kicker.setPosition(0.0);
 
                 turret.setTargetPosition(turretTargetPosition);
                 turret.setPower(turret_Power);
@@ -105,7 +105,7 @@ public class LauncherStateMachine {
                 targetVelocity = launcher_Launching_Velocity;
                 leftFeedRoller.setPower(feed_Roller_Power);
                 rightFeedRoller.setPower(feed_Roller_Power);
-                kicker.setPower(feed_Roller_Power);
+                kicker.setPosition(1.0);
                 intakeFront.setPower(intake_Power);
 
                 turret.setTargetPosition(turretTargetPosition);

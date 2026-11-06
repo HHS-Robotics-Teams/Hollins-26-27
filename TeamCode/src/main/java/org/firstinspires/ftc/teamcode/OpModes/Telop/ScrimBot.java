@@ -103,11 +103,11 @@ public class ScrimBot extends OpMode {
         if (INTAKE_FEED_ROLLERS) {
             rightFeedRoller.setPower(INTAKE_REVERSED ? -1 : 1);
             leftFeedRoller.setPower(INTAKE_REVERSED ? -1 : 1);
-            kicker.setPower(INTAKE_REVERSED ? -1 : 1);
+            kicker.setPosition(INTAKE_REVERSED ? 0.0 : 1.0);
         } else {
             rightFeedRoller.setPower(0);
             leftFeedRoller.setPower(0);
-            kicker.setPower(0);
+            kicker.setPosition(0.0);
         }
 
 
