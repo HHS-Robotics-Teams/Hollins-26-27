@@ -20,19 +20,20 @@ import static org.firstinspires.ftc.teamcode.aProccedural.Constants.turret_Power
 
 /**
  * State Machine to control the Launcher, Turret, Intake, and Feed Rollers using a custom PIDF loop on the launcher flywheel.
- * States: IDLE, INTAKE, AIM, SPIN_UP, LAUNCHING
+ * States: IDLE, INTAKE, AIM (WHYYYYYYYY), SPIN_UP, LAUNCHING
  */
 public class LauncherStateMachine {
 
     public enum State {
         IDLE,
         INTAKE,
-        AIM,
+        // AIM,
         SPIN_UP,
         LAUNCHING
     }
 
     private State currentState = State.IDLE;
+    private State lastState = currentState;
     private final ElapsedTime stateTimer = new ElapsedTime();
     private final PIDFController launcherPIDF;
 
@@ -40,8 +41,11 @@ public class LauncherStateMachine {
     private double spinUpTimeSeconds = 0.5; // Time required for flywheel to reach full speed
     private int turretTargetPosition = 0;
     private boolean intakeReversed = false;
+    private boolean lastReversed = intakeReversed;
+    private double targetVelocity;
 
     public LauncherStateMachine() {
+        targetVelocity = launcher_Idle_Velocity;
         stateTimer.reset();
         launcherPIDF = new PIDFController(launcher_kP, launcher_kI, launcher_kD, launcher_kF);
     }
@@ -51,71 +55,81 @@ public class LauncherStateMachine {
      */
     public void update() {
         // Keep PIDF coefficients updated in case modified via tuning / Dashboard
-        launcherPIDF.setPIDF(launcher_kP, launcher_kI, launcher_kD, launcher_kF);
-
-        double targetVelocity = launcher_Idle_Velocity;
-
-        switch (currentState) {
-            case IDLE:
-                targetVelocity = launcher_Idle_Velocity;
-                intakeFront.setPower(0);
-                leftFeedRoller.setPower(0);
-                rightFeedRoller.setPower(0);
-                kicker.setPosition(0.0);
-
-                turret.setTargetPosition(turretTargetPosition);
-                turret.setPower(turret_Power);
+        consts = launcherPIDF.getConstants();
+        updatedConsts = new double[] {launcher_kP, launcher_kI, launcher_kD, launcher_kF};
+        for(int x = 0; x < 4; x++) {
+            if(consts[x] != updatedConsts[x]) {
+                launcherPIDF.setPIDF(launcher_kP, launcher_kI, launcher_kD, launcher_kF);
                 break;
+            }
+        }
 
-            case INTAKE:
-                targetVelocity = launcher_Idle_Velocity;
-                double dir = intakeReversed ? -1.0 : 1.0;
-                intakeFront.setPower(dir * intake_Power);
-                leftFeedRoller.setPower(dir * feed_Roller_Power);
-                rightFeedRoller.setPower(dir * feed_Roller_Power);
-                kicker.setPosition(intakeReversed ? 0.0 : 1.0);
+        if (getTurretTargetPosition() != turretTargetPosition) {
+            turret.setTargetPosition(turretTargetPosition);
+        }
+        if (turret_Power != getTurretPower()) {
+            turret.setPower(turret_power);
+        }
 
-                turret.setTargetPosition(turretTargetPosition);
-                turret.setPower(turret_Power);
-                break;
+        if(lastState != currentState || lastReversed != intakeReversed) {
+            if(lastState != currentState) {
+               stateTimer.reset();
+            }
 
-            case AIM:
-                targetVelocity = launcher_Launching_Velocity;
-                intakeFront.setPower(0);
-                leftFeedRoller.setPower(0);
-                rightFeedRoller.setPower(0);
-                kicker.setPosition(0.0);
+            switch (currentState) {
+                case IDLE:
+                    targetVelocity = launcher_Idle_Velocity;
+                    intakeFront.setPower(0);
+                    leftFeedRoller.setPower(0);
+                    rightFeedRoller.setPower(0);
+                    kicker.setPosition(0.0);
+                    break;
 
-                turret.setTargetPosition(turretTargetPosition);
-                turret.setPower(turret_Power);
-                break;
+                case INTAKE:
+                    targetVelocity = launcher_Idle_Velocity;
+                    double dir = intakeReversed ? -1.0 : 1.0;
+                    intakeFront.setPower(dir * intake_Power);
+                    leftFeedRoller.setPower(dir * feed_Roller_Power);
+                    rightFeedRoller.setPower(dir * feed_Roller_Power);
+                    //TODO why is it reversed here but not below
+                    //also why are we moving kicker at all when not launching
+                    kicker.setPosition(intakeReversed ? 0.0 : 1.0);
+                    break;
 
-            case SPIN_UP:
-                targetVelocity = launcher_Launching_Velocity;
-                intakeFront.setPower(0);
-                leftFeedRoller.setPower(0);
-                rightFeedRoller.setPower(0);
-                kicker.setPosition(0.0);
+                // case AIM:
+                //     targetVelocity = launcher_Launching_Velocity;
+                //     intakeFront.setPower(0);
+                //     leftFeedRoller.setPower(0);
+                //     rightFeedRoller.setPower(0);
+                //     kicker.setPosition(0.0);
+                //     break;
 
-                turret.setTargetPosition(turretTargetPosition);
-                turret.setPower(turret_Power);
-                break;
+                case SPIN_UP:
+                    targetVelocity = launcher_Launching_Velocity;
+                    intakeFront.setPower(0);
+                    leftFeedRoller.setPower(0);
+                    rightFeedRoller.setPower(0);
+                    kicker.setPosition(0.0);
+                    break;
 
-            case LAUNCHING:
-                targetVelocity = launcher_Launching_Velocity;
-                leftFeedRoller.setPower(feed_Roller_Power);
-                rightFeedRoller.setPower(feed_Roller_Power);
-                kicker.setPosition(1.0);
-                intakeFront.setPower(intake_Power);
-
-                turret.setTargetPosition(turretTargetPosition);
-                turret.setPower(turret_Power);
-                break;
+                case LAUNCHING:
+                    targetVelocity = launcher_Launching_Velocity;
+                    leftFeedRoller.setPower(feed_Roller_Power);
+                    rightFeedRoller.setPower(feed_Roller_Power);
+                    //TODO why is it reversed here but not above
+                    kicker.setPosition(1.0);
+                    intakeFront.setPower(intake_Power);
+                    break;
+            }
         }
 
         // Apply custom PIDF control loop output to flywheel motor power
         double power = launcherPIDF.calculate(targetVelocity, launcher.getVelocity());
-        launcher.setPower(power);
+        if(abs(launcher.getPower() - power) >= 0.04 || (power == 0 && launcher.getPower() != 0)) {
+            launcher.setPower(power);
+        }
+        lastState = currentState;
+        lastReversed = intakeReversed;
     }
 
     public PIDFController getPIDFController() {
@@ -152,7 +166,8 @@ public class LauncherStateMachine {
 
     public void aim(int targetPosition) {
         this.turretTargetPosition = targetPosition;
-        setState(State.AIM);
+        spinUp();
+        // setState(State.AIM);
     }
 
     public void spinUp() {
@@ -171,6 +186,10 @@ public class LauncherStateMachine {
 
     public int getTurretTargetPosition() {
         return turretTargetPosition;
+    }
+
+    public int getTurretPower() {
+        return turret.getPower();
     }
 
     public void setIntakeReversed(boolean reversed) {

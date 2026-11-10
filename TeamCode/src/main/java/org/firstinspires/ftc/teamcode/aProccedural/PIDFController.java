@@ -75,9 +75,10 @@ public class PIDFController {
     private double fTerm = 0;
 
     private final ElapsedTime timer = new ElapsedTime();
-    private boolean firstRun = true;
+    private boolean firstRun;
 
     public PIDFController(double kP, double kI, double kD, double kF) {
+        firstRun = true;
         setPIDF(kP, kI, kD, kF);
         timer.reset();
     }
@@ -170,9 +171,27 @@ public class PIDFController {
     public double getI() { return iTerm; }
     public double getD() { return dTerm; }
     public double getF() { return fTerm; }
+    public double[] getTerms() { return new double[] {pTerm, iTerm, dTerm, fTerm};}
     public double getKP() { return kP; }
     public double getKI() { return kI; }
     public double getKD() { return kD; }
     public double getKF() { return kF; }
+    public double[] getConstants() { return new double[] { kP, kI, kD, kF }; }
     public double getLastError() { return lastError; }
+    public String getDebugString() {
+        return "------ PID DEBUG ------\n" +
+           formatArray(getConstants(), "Constants", "kP", "kI", "kD", "kF") + "\n" +
+           formatArray(getTerms(), "Current Terms", "pTerm", "iTerm", "dTerm", "fTerm");
+    }
+
+    private String formatArray(double[] vals, String title, String... labels) {
+        StringBuilder sb = new StringBuilder(title + ":\n");
+        for (int i = 0; i < vals.length; i++) {
+            // %.4f to have 0.000X displayed
+            sb.append(String.format("  %s: %.4f\n", labels[i], vals[i]));
+        }
+        return sb.toString();
+    }
+
+
 }

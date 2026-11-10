@@ -37,7 +37,7 @@ public class CompDriveV1 extends OpMode {
         // Drivetrain controls
         TeleOpDrive.run(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x);
 
-        // --- Turret Preset Positions (D-Pad) ---
+        // --- Turret Preset Positions (D-Pad) --- TODO make this not bad controls
         if (input.dpad_up.down()) {
             launcherSM.setTurretTargetPosition(turret_Forward_Pos);
         } else if (input.dpad_left.down()) {
@@ -61,6 +61,8 @@ public class CompDriveV1 extends OpMode {
         }
 
         // --- Mechanism State Machine Control ---
+        //TODO make this not awful, make timers and sensors to automate sequence
+        //and make it so aim and spin up happen at same time
         if (input.right_trigger.held()) {
             // Right Trigger -> Spin up flywheel first, then feed/launch
             if (!launcherSM.isSpunUp()) {
