@@ -18,6 +18,7 @@ public class Components {
     public static CRServo servoFeedRight2;
     public static DcMotor intakeRear;
     public static DcMotor spindexer;
+    public static DcMotor launcher;
     public static Servo flowerFront;
     public static Servo shootingServo;
 
@@ -51,6 +52,13 @@ public class Components {
         servoFeedRight2= hardwareMap.get(CRServo.class, "servofeedright2");
         servoFeedRight2.setDirection(CRServo.Direction.REVERSE);
 
+        spindexer = hardwareMap.get(DcMotor.class,"spindexer");
+        spindexer.setDirection(DcMotorSimple.Direction.FORWARD);
+        spindexer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        launcher = hardwareMap.get(DcMotor.class,"launcher");
+        launcher.setDirection(DcMotorSimple.Direction.FORWARD);
+        launcher.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 }
