@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode.OpModes.Prototyping;
 
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.counterRoller;
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.launcher;
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.intakeFront;import static org.firstinspires.ftc.teamcode.aProccedural.Components.launcher;
+
+import org.firstinspires.ftc.teamcode.aProccedural.Components;
+import org.firstinspires.ftc.teamcode.aProccedural.LauncherStateMachine;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.launcher_Launching_Velocity;
+import static org.firstinspires.ftc.teamcode.aProccedural.Constants.reset_Motors;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -19,20 +23,18 @@ public class Launching_test extends OpMode {
     private double LaunchingTestVelocity;
     private double LaunchingPower;
     private double CounterRollerPower;
+    private LauncherStateMachine launcherSM;
 
 
 
     @Override
     public void init() {
-        launcher = hardwareMap.get(DcMotorEx.class, "launcher");
-        launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        launcher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        launcher.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        counterRoller = hardwareMap.get(CRServo.class, "counterRoller");
-        counterRoller.setDirection(DcMotorSimple.Direction.FORWARD);
+        Components.initComponents(hardwareMap);
+        reset_Motors();
 
         input = new Input();
+
+        launcherSM = new LauncherStateMachine();
     }
 
     @Override
@@ -57,11 +59,17 @@ public class Launching_test extends OpMode {
             launcher.setVelocity(0);
             counterRoller.setPower(0);
         }
-        if (input.a.down()){
+        if (input.cross_A.down()){
             counterRoller.setDirection(DcMotorSimple.Direction.REVERSE);
         }
-        if (input.b.down()){
+        if (input.circle_B.down()){
             counterRoller.setDirection(DcMotorSimple.Direction.FORWARD);
+        }
+        if (input.left_trigger.held()) {
+            intakeFront.setPower(1);
+        }
+        if (input.left_trigger.up()){
+            intakeFront.setPower(0);
         }
         telemetry.addData("Launching Power",LaunchingPower);
         telemetry.addData("Launching Velocity", LaunchingTestVelocity);

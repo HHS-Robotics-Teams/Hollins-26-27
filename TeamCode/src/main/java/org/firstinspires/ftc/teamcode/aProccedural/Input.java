@@ -66,10 +66,10 @@ public class Input {
     public ButtonState b = new ButtonState();
     public ButtonState x = new ButtonState();
     public ButtonState y = new ButtonState();
-    public ButtonState circle = new ButtonState();
-    public ButtonState cross = new ButtonState();
-    public ButtonState square = new ButtonState();
-    public ButtonState delta = new ButtonState();
+    public ButtonState circle_B = new ButtonState();
+    public ButtonState cross_A = new ButtonState();
+    public ButtonState square_X = new ButtonState();
+    public ButtonState delta_Y = new ButtonState();
 
     public DisplacingButtonState left_trigger = new DisplacingButtonState();
     public DisplacingButtonState right_trigger = new DisplacingButtonState();
@@ -126,10 +126,10 @@ public class Input {
         updateState(start, gamepad.start);
 
         //Rev/ps4 controller specific
-        updateState(circle, gamepad.circle);
-        updateState(cross, gamepad.cross);
-        updateState(square, gamepad.square);
-        updateState(delta, gamepad.triangle);
+        updateState(circle_B, gamepad.circle);
+        updateState(cross_A, gamepad.cross);
+        updateState(square_X, gamepad.square);
+        updateState(delta_Y, gamepad.triangle);
 
         updateState(share, gamepad.share);
         updateState(guide, gamepad.guide);

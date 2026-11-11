@@ -88,7 +88,7 @@ public class ScrimBot extends OpMode {
             INTAKE_RUN = true;
         }
 
-        if (input.circle.down()) {
+        if (input.circle_B.down()) {
             // Reverses intake
             INTAKE_REVERSED = !INTAKE_REVERSED;
         }

@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.OpModes.Prototyping;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.intakeFront;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.launcher;
+import static org.firstinspires.ftc.teamcode.aProccedural.Constants.intake_Power;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.launcher_Idle_Velocity;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.launcher_Launching_Velocity;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.launcher_kD;
@@ -65,8 +67,8 @@ public class LauncherFlywheelTuner extends OpMode {
 
         // --- Gamepad Interactive Controls ---
 
-        // Toggle Motor ON/OFF (Step Response Test)
-        if (input.a.down()) {
+        // Toggle Flywheel Motor ON/OFF (Step Response Test)
+        if (input.a.down() || input.cross_A.down()) {
             motorEnabled = !motorEnabled;
             if (!motorEnabled) {
                 pidf.reset();
@@ -74,7 +76,7 @@ public class LauncherFlywheelTuner extends OpMode {
         }
 
         // Switch Target Velocity Preset (Idle vs Launching)
-        if (input.b.down()) {
+        if (input.b.down() || input.circle_B.down()) {
             if (tuning_TargetVelocity == launcher_Launching_Velocity) {
                 tuning_TargetVelocity = launcher_Idle_Velocity;
             } else {
@@ -83,12 +85,12 @@ public class LauncherFlywheelTuner extends OpMode {
         }
 
         // Reset PIDF Integral Sum & History
-        if (input.x.down()) {
+        if (input.x.down() || input.square_X.down()) {
             pidf.reset();
         }
 
         // Save Current Tuned Values into Constants memory
-        if (input.y.down()) {
+        if (input.y.down() || input.delta_Y.down()) {
             launcher_kP = tuning_kP;
             launcher_kI = tuning_kI;
             launcher_kD = tuning_kD;
@@ -120,6 +122,13 @@ public class LauncherFlywheelTuner extends OpMode {
             adjustParameter(selectedParam, -currentStep);
         }
 
+        // --- Intake Motor Control ---
+         if (gamepad1.left_trigger > 0.1) {
+            intakeFront.setPower(intake_Power);
+        } else {
+            intakeFront.setPower(0);
+        }
+
         // --- Execute Custom PIDF Loop ---
         pidf.setPIDF(tuning_kP, tuning_kI, tuning_kD, tuning_kF);
 
@@ -137,6 +146,7 @@ public class LauncherFlywheelTuner extends OpMode {
         telemetry.addData("03. Actual Velocity", "%.1f ticks/s", currentVelocity);
         telemetry.addData("04. Error", "%.1f ticks/s", error);
         telemetry.addData("05. Calculated Power", "%.3f", power);
+        telemetry.addData("06. Intake Power", "%.2f [RT: Fwd | LT: Rev]", intakeFront.getPower());
 
         telemetry.addData("-- PIDF Outputs --", "");
         telemetry.addData("P Output", "%.4f", pidf.getP());
@@ -152,7 +162,7 @@ public class LauncherFlywheelTuner extends OpMode {
         telemetry.addData("kD", "%.6f", tuning_kD);
         telemetry.addData("kF", "%.6f", tuning_kF);
         telemetry.addData("Target Vel", "%.1f", tuning_TargetVelocity);
-        telemetry.addData("Action Hints", "[Y] Save to Constants | [X] Reset PIDF");
+        telemetry.addData("Action Hints", "[Y] Save | [X] Reset PIDF | [RT/LT] Intake");
 
         telemetry.update();
     }

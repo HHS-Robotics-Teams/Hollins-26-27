@@ -4,16 +4,18 @@ import static org.firstinspires.ftc.teamcode.aProccedural.Components.turret;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.launcher;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Constants {
     public static double launcher_Idle_Velocity = 500;
     public static double launcher_Launching_Velocity = 1000;
+    public static double launch_Threshold = 150;
 
     // Launcher Custom PIDF Coefficients
-    public static double launcher_kP = 0.0008;
-    public static double launcher_kI = 0.0001;
-    public static double launcher_kD = 0.00005;
-    public static double launcher_kF = 0.00045;
+    public static double launcher_kP = 0.0008; // Do not change
+    public static double launcher_kI = 0.0001; // Do not change
+    public static double launcher_kD = 0.000000; // Do not change
+    public static double launcher_kF = 0.000450; // Do not change
 
     public static double turret_Power = 0.5;
     public static int intake_Power = 1;
@@ -30,11 +32,17 @@ public class Constants {
     public static boolean INTAKE_REVERSED = false;
     public static boolean INTAKE_RUN = false;
     public static boolean INTAKE_FEED_ROLLERS = false;
+    public static double LaunchingPower;
+    public static double CounterRollerPower;
+
+    public static ElapsedTime spinUpTime = new ElapsedTime();
 
     public static void reset_Motors() {
+
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         turret.setTargetPosition(turret_Min_Pos);
+        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
 
         launcher.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -44,4 +52,5 @@ public class Constants {
         turret.setPower(turret_Power);
         launcher.setVelocity(launcher_Idle_Velocity);
     }
+
 }

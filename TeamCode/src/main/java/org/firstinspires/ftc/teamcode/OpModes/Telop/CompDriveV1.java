@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.teamcode.OpModes.Telop;
 
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.launcher;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.turret;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.reset_Motors;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.turret_Backwards_Pos;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.turret_Forward_Pos;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.turret_Left_Pos;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.turret_Right_Pos;
+import static org.firstinspires.ftc.teamcode.aProccedural.Constants.spinUpTime;
+;
+
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -56,7 +60,7 @@ public class CompDriveV1 extends OpMode {
         }
 
         // --- Toggle Intake Direction ---
-        if (input.circle.down() || input.b.down()) {
+        if (input.circle_B.down() || input.b.down()) {
             launcherSM.toggleIntakeReversed();
         }
 
@@ -67,6 +71,7 @@ public class CompDriveV1 extends OpMode {
             // Right Trigger -> Spin up flywheel first, then feed/launch
             if (!launcherSM.isSpunUp()) {
                 launcherSM.spinUp();
+                spinUpTime.reset();
             } else {
                 launcherSM.launch();
             }
@@ -90,6 +95,8 @@ public class CompDriveV1 extends OpMode {
         telemetry.addData("Turret Target Pos", launcherSM.getTurretTargetPosition());
         telemetry.addData("Turret Current Pos", turret.getCurrentPosition());
         telemetry.addData("Intake Reversed", launcherSM.isIntakeReversed());
+        telemetry.addData("Launcher Velocity", launcher.getVelocity());
+        telemetry.addData("Spin up Timer",spinUpTime.seconds());
         telemetry.update();
     }
 }
