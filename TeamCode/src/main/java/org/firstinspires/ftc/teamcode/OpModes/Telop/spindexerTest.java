@@ -43,7 +43,7 @@ public class spindexerTest extends OpMode {
     public void loop() {
         // Setup
         input.pollGamepad(gamepad1);
-
+    
         // Spindexer
         if (input.left_bumper.down()) {
             adjustSpeed -= adjustIncrement;

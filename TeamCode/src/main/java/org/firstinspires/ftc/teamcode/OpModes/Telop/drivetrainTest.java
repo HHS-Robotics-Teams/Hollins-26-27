@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.aProccedural.Components;
 import org.firstinspires.ftc.teamcode.aProccedural.Input;
 
 @TeleOp(name = "Drivetrain_Test")
-public class DTTeleop extends OpMode {
+public class drivetrainTest extends OpMode {
 
     // Variables
     // Setup
@@ -45,7 +45,6 @@ public class DTTeleop extends OpMode {
         leftRear.setPower(y-x+rx);
         rightFront.setPower(y-x-rx);
         rightRear.setPower(y+x-rx);
-
 
     }
 }
