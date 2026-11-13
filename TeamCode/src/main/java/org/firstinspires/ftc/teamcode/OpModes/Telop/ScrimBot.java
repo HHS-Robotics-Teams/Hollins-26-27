@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes.Telop;
 
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.conveyor;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.intakeFront;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.kicker;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.launcher;
@@ -93,11 +94,13 @@ public class ScrimBot extends OpMode {
             INTAKE_REVERSED = !INTAKE_REVERSED;
         }
 
-        // Control the main intake motor
+        // Control the main intake motor and conveyor
         if (INTAKE_RUN) {
             intakeFront.setPower(INTAKE_REVERSED ? -intake_Power : intake_Power);
+            conveyor.setPower(INTAKE_REVERSED ? -intake_Power : intake_Power);
         } else {
             intakeFront.setPower(0);
+            conveyor.setPower(0);
         }
 
         if (INTAKE_FEED_ROLLERS) {

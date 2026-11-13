@@ -8,14 +8,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Constants {
     public static double launcher_Idle_Velocity = 500;
-    public static double launcher_Launching_Velocity = 1000;
+    public static double launcher_Launching_Velocity = 1500;
     public static double launch_Threshold = 150;
 
     // Launcher Custom PIDF Coefficients
     public static double launcher_kP = 0.0008; // Do not change
     public static double launcher_kI = 0.0001; // Do not change
-    public static double launcher_kD = 0.000000; // Do not change
-    public static double launcher_kF = 0.000450; // Do not change
+    public static double launcher_kD = 0.000080; // Do not change
+    public static double launcher_kF = 0.000420; // Do not change
 
     public static double turret_Power = 0.5;
     public static int intake_Power = 1;
@@ -23,10 +23,11 @@ public class Constants {
 
     // Positions
     public static int turret_Min_Pos = 0;
-    public static int turret_Left_Pos = -500;
-    public static int turret_Right_Pos = 500;
+    public static int turret_Left_Pos = -710;
+    public static int turret_Right_Pos = 690;
     public static int turret_Forward_Pos = 0;
-    public static int turret_Backwards_Pos = 1000;
+    public static int turret_Backwards_Pos = -1375;
+    public static int turret_Max_Pos = -1940;
     //Flags
     public static boolean LAUNCHING = false;
     public static boolean INTAKE_REVERSED = false;

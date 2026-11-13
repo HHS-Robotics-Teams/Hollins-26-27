@@ -16,6 +16,7 @@ public class Components {
 
             public static DcMotorEx launcher;
             public static DcMotor intakeFront;
+            public static DcMotor conveyor;
             public static CRServo leftFeedRoller;
             public static CRServo rightFeedRoller;
             public static Servo kicker;
@@ -55,6 +56,8 @@ public class Components {
                 intakeFront.setDirection(DcMotorSimple.Direction.FORWARD);
 
                 // Initialize Feed Rollers
+                conveyor = hardwareMap.get(DcMotor.class, "conveyor");
+                conveyor.setDirection(DcMotorSimple.Direction.FORWARD);
                 //leftFeedRoller = hardwareMap.get(CRServo.class, "leftRoller");
                 //rightFeedRoller = hardwareMap.get(CRServo.class, "rightRoller");
                 kicker = hardwareMap.get(Servo.class, "kicker");

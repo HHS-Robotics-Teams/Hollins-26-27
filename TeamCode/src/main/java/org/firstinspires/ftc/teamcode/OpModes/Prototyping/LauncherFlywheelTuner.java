@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.OpModes.Prototyping;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.conveyor;
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.counterRoller;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.intakeFront;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.launcher;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.intake_Power;
@@ -41,7 +43,7 @@ public class LauncherFlywheelTuner extends OpMode {
         KP, KI, KD, KF, TARGET_VELOCITY
     }
     private Parameter selectedParam = Parameter.KP;
-    private final double[] stepSizes = {0.00001, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0};
+    private final double[] stepSizes = {0.000001,0.00001, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0};
     private int stepIndex = 1; // Default step = 0.0001
 
     @Override
@@ -123,13 +125,15 @@ public class LauncherFlywheelTuner extends OpMode {
         }
 
         // --- Intake Motor Control ---
-         if (gamepad1.left_trigger > 0.1) {
+        if (gamepad1.left_trigger > 0.1) {
             intakeFront.setPower(intake_Power);
+            conveyor.setPower(intake_Power);
         } else {
             intakeFront.setPower(0);
+            conveyor.setPower(0);
         }
 
-        // --- Execute Custom PIDF Loop ---
+        // --- Execute Custom PIDF Loop for Flywheel ---
         pidf.setPIDF(tuning_kP, tuning_kI, tuning_kD, tuning_kF);
 
         double currentVelocity = launcher.getVelocity();
@@ -138,6 +142,10 @@ public class LauncherFlywheelTuner extends OpMode {
 
         launcher.setPower(power);
 
+        // --- Counter Roller Control (runs with launcher flywheel at 95% power) ---
+        double counterRollerPower = motorEnabled ? (power * 0.95) : 0;
+        counterRoller.setPower(counterRollerPower);
+
         // --- Driver Station Telemetry Output ---
         double error = target - currentVelocity;
 
@@ -145,8 +153,9 @@ public class LauncherFlywheelTuner extends OpMode {
         telemetry.addData("02. Target Velocity", "%.1f ticks/s [Press B to switch preset]", target);
         telemetry.addData("03. Actual Velocity", "%.1f ticks/s", currentVelocity);
         telemetry.addData("04. Error", "%.1f ticks/s", error);
-        telemetry.addData("05. Calculated Power", "%.3f", power);
-        telemetry.addData("06. Intake Power", "%.2f [RT: Fwd | LT: Rev]", intakeFront.getPower());
+        telemetry.addData("05. Flywheel Power", "%.3f", power);
+        telemetry.addData("06. Counter Roller Power", "%.3f", counterRollerPower);
+        telemetry.addData("07. Intake Power", "%.2f [LT: Intake]", intakeFront.getPower());
 
         telemetry.addData("-- PIDF Outputs --", "");
         telemetry.addData("P Output", "%.4f", pidf.getP());
@@ -162,7 +171,7 @@ public class LauncherFlywheelTuner extends OpMode {
         telemetry.addData("kD", "%.6f", tuning_kD);
         telemetry.addData("kF", "%.6f", tuning_kF);
         telemetry.addData("Target Vel", "%.1f", tuning_TargetVelocity);
-        telemetry.addData("Action Hints", "[Y] Save | [X] Reset PIDF | [RT/LT] Intake");
+        telemetry.addData("Action Hints", "[Y] Save | [X] Reset PIDF | [LT] Intake");
 
         telemetry.update();
     }

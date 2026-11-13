@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.aProccedural;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.conveyor;
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.counterRoller;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.intakeFront;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.kicker;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.launcher;
@@ -84,6 +86,7 @@ public class LauncherStateMachine {
                 case IDLE:
                     targetVelocity = launcher_Idle_Velocity;
                     intakeFront.setPower(0);
+                    conveyor.setPower(0);
                     kicker.setPosition(0.0);
                     break;
 
@@ -91,7 +94,6 @@ public class LauncherStateMachine {
                     targetVelocity = launcher_Idle_Velocity;
                     double dir = intakeReversed ? -1.0 : 1.0;
                     intakeFront.setPower(dir * intake_Power);
-
                     break;
 
                 // case AIM:
@@ -104,16 +106,18 @@ public class LauncherStateMachine {
 
                 case SPIN_UP:
                     targetVelocity = launcher_Launching_Velocity;
-                    setCounterRollerPower();
+                    counterRoller.setPower(1);
                     kicker.setPosition(0.0);
                     if (abs(launcher.getVelocity() - targetVelocity) <= launch_Threshold){
                         setState(State.LAUNCHING);
-                    } 
+                    }
                     break;
 
                 case LAUNCHING:
+                    counterRoller.setPower(1);
                     kicker.setPosition(1.0);
                     intakeFront.setPower(intake_Power);
+                    conveyor.setPower(intake_Power);
                     break;
             }
         }
