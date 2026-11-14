@@ -6,6 +6,11 @@ import static org.firstinspires.ftc.teamcode.aProccedural.Components.leftRear;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.rightFront;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.rightRear;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.spindexer;
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.launcher;
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.counterRoller;
+
+
+import static java.lang.Thread.sleep;
 
 import androidx.core.view.KeyEventDispatcher;
 
@@ -25,9 +30,10 @@ public class spindexerTest extends OpMode {
     private Input input;
 
     // Spindexer
-    private static double adjustSpeed = 0.75;
+    private static double adjustSpeed = -0.75;
     private double adjustIncrement = 0.05;
-    private double ticksPer360 = 537.7;
+    private double ticksPerRev = spindexer.getMotorType().getTicksPerRev();
+    private int ticks90 = (int) Math.round(90/360*ticksPerRev);
 
     @Override
     public void init() {
@@ -43,7 +49,7 @@ public class spindexerTest extends OpMode {
     public void loop() {
         // Setup
         input.pollGamepad(gamepad1);
-    
+
         // Spindexer
         if (input.left_bumper.down()) {
             adjustSpeed -= adjustIncrement;
@@ -80,16 +86,26 @@ public class spindexerTest extends OpMode {
             telemetry.addData("motor power ", spindexer.getPower());
             telemetry.update();
         }
-
     }
 
     // Spindexer
-    public void spinTheDexer(int degrees) {
-        double ticks = (degrees / 90) * 134.425;
+    public void spinTheDexer(int ticks) {
         spindexer.setTargetPosition(spindexer.getCurrentPosition() + ((int) ticks));
     }
 
     public static void spinTheDexerLikeCrazy() {
+        launcher.setPower(1);
+        counterRoller.setPower(1);
+        try {
+            sleep(2000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
         spindexer.setPower(adjustSpeed);
+    }
+
+    public void resetSpinDexer()
+    {
+
     }
 }

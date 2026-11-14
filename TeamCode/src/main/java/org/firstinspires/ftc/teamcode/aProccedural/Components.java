@@ -12,15 +12,12 @@ public class Components {
     public static DcMotor leftRear;
     public static DcMotor rightRear;
     public static DcMotor intakeFront;
-    public static CRServo servoFeedLeft1;
-    public static CRServo servoFeedRight1;
-    public static CRServo servoFeedLeft2;
-    public static CRServo servoFeedRight2;
     public static DcMotor intakeRear;
     public static DcMotor spindexer;
     public static DcMotor launcher;
     public static Servo flowerFront;
     public static Servo shootingServo;
+    public static CRServo counterRoller;
 
     public static void initComponents(HardwareMap hardwareMap) {
         leftFront = hardwareMap.get(DcMotor.class, "leftfront");
@@ -40,18 +37,6 @@ public class Components {
         intakeFront.setDirection(DcMotorSimple.Direction.FORWARD);
         intakeFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        servoFeedLeft1= hardwareMap.get(CRServo.class, "servofeedleft1");
-        servoFeedLeft1.setDirection(CRServo.Direction.REVERSE);
-
-        servoFeedRight1= hardwareMap.get(CRServo.class, "servofeedright1");
-        servoFeedRight1.setDirection(CRServo.Direction.REVERSE);
-
-        servoFeedLeft2= hardwareMap.get(CRServo.class, "servofeedleft2");
-        servoFeedLeft2.setDirection(CRServo.Direction.REVERSE);
-
-        servoFeedRight2= hardwareMap.get(CRServo.class, "servofeedright2");
-        servoFeedRight2.setDirection(CRServo.Direction.REVERSE);
-
         spindexer = hardwareMap.get(DcMotor.class,"spindexer");
         spindexer.setDirection(DcMotorSimple.Direction.FORWARD);
         spindexer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -59,6 +44,9 @@ public class Components {
         launcher = hardwareMap.get(DcMotor.class,"launcher");
         launcher.setDirection(DcMotorSimple.Direction.FORWARD);
         launcher.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        counterRoller = hardwareMap.get(CRServo.class, "counterroller");
+        counterRoller.setDirection(CRServo.Direction.REVERSE);
 
     }
 }

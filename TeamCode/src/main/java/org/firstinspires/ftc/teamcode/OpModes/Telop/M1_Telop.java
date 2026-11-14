@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.OpModes.Telop;
 
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.intakeFront;
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.launcher;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.leftFront;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.leftRear;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.rightFront;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.rightRear;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.spindexer;
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.counterRoller;
 
 import androidx.core.view.KeyEventDispatcher;
 
@@ -63,12 +65,14 @@ public class M1_Telop extends OpMode {
         // Logic
         if(input.left_trigger.down() && !intakeReverse) {
             intakeTest.setAllIntake(1);
+            spindexer.setPower(-.2);
         }
         else if(input.left_trigger.down() && intakeReverse){
             intakeTest.setAllIntake(-1);
         }
         if(input.left_trigger.up()){
             intakeTest.setAllIntake(0);
+            spindexer.setPower(0);
             telemetry.addData("Intake", "Off");
         }
 
@@ -89,7 +93,7 @@ public class M1_Telop extends OpMode {
 
         if (input.y.down()) {
             //spinTheDexer(90);
-            spindexer.setPower(.15);
+            spindexer.setPower(-.2);
             //spindexer.setTargetPosition(spindexer.getCurrerntPosition()+50);
             telemetry.addData("y pressed?", input.y.down());
             telemetry.addData("motor power", spindexer.getPower());
@@ -109,6 +113,8 @@ public class M1_Telop extends OpMode {
         }
         if (input.x.up()) {
             spindexer.setPower(0);
+            launcher.setPower(0);
+            counterRoller.setPower(0);
             telemetry.addData("x unpressed?", input.x.up());
             telemetry.addData("motor power ", spindexer.getPower());
             telemetry.update();
