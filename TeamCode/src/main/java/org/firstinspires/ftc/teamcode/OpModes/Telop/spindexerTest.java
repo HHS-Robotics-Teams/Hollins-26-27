@@ -95,7 +95,7 @@ public class spindexerTest extends OpMode {
 
     public static void spinTheDexerLikeCrazy() {
         launcher.setPower(1);
-        counterRoller.setPower(1);
+        counterRoller.setPower(0.9);
         try {
             sleep(2000);
         } catch (InterruptedException e) {
