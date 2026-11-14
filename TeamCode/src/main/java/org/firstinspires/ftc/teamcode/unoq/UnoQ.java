@@ -29,8 +29,8 @@ import java.nio.ByteOrder;
  *   mode u8, ack_target_seq u8
  *
  * Protocol 2 (practice test op modes, R1): a short command block at 0x74 (UnoQCommand: turret
- * target + fire requests, 8 bytes) and a 24-byte robot state at 0x80 (UnoQRobotState: the 16 bytes
- * above plus turret, launcher and shot counts). Only small messages go over I2C.
+ * target, distance, fire requests, 10 bytes) and a 26-byte robot state at 0x80 (UnoQRobotState: the
+ * 16 bytes above plus turret, launcher and shot counts). Only small messages go over I2C.
  *
  * REV hubs read at most ~100 bytes per transaction, so the out block is read in two parts:
  * 0x00..0x5B (92 bytes, checksummed) every loop, and 0x5C..0x73 (24 bytes) when needed.
@@ -48,8 +48,8 @@ public class UnoQ extends I2cDeviceSynchDevice<I2cDeviceSynch> {
     public static final int MAIN_LENGTH = 0x5C;       // header + tags + balls (92 bytes)
     public static final int REG_EXTRA = 0x5C;
     public static final int EXTRA_LENGTH = 0x74 - 0x5C; // field pose + path target (24 bytes)
-    public static final int REG_COMMAND = 0x74;         // protocol 2: UnoQCommand (8 bytes)
-    public static final int COMMAND_LENGTH = 8;
+    public static final int REG_COMMAND = 0x74;         // protocol 2: UnoQCommand (10 bytes)
+    public static final int COMMAND_LENGTH = 10;
     public static final int REG_ROBOT_IN = 0x80;
     public static final int ROBOT_IN_LENGTH = 16;        // protocol 1 write; protocol 2 writes UnoQRobotState.LENGTH
 
@@ -147,14 +147,14 @@ public class UnoQ extends I2cDeviceSynchDevice<I2cDeviceSynch> {
         deviceClient.write(REG_ROBOT_IN, b.array());
     }
 
-    /** Protocol 2: read the 8-byte command block (turret target, fire requests). One short I2C read. */
+    /** Protocol 2: read the command block (turret target, distance, fire requests). One short I2C read. */
     public UnoQCommand readCommand() {
         long t0 = System.nanoTime();
         byte[] raw = deviceClient.read(REG_COMMAND, COMMAND_LENGTH);
         return new UnoQCommand(raw, (System.nanoTime() - t0) / 1e6);
     }
 
-    /** Protocol 2: write the 24-byte robot state block. */
+    /** Protocol 2: write the robot state block (UnoQRobotState.LENGTH bytes). */
     public void writeRobotState(UnoQRobotState state) {
         deviceClient.write(REG_ROBOT_IN, state.toBytes());
     }

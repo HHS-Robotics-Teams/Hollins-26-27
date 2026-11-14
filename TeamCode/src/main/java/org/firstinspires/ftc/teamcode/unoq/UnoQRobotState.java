@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /**
- * Robot -> UNO Q state block (protocol 2, practice only), written at register 0x80, 24 bytes,
+ * Robot -> UNO Q state block (protocol 2, practice only), written at register 0x80, 26 bytes,
  * little-endian. The first 16 bytes are the protocol 1 block unchanged:
  *
  *   0  robot_seq u16 | 2 x_cin i16 | 4 y_cin i16 | 6 heading_mrad i16
@@ -13,11 +13,12 @@ import java.nio.ByteOrder;
  *   15 ack_fire_seq u8 (last fire_seq the robot fired on)
  *   16 turret_cdeg i16 (measured) | 18 turret_target_cdeg i16 (commanded) | 20 launcher_rpm i16
  *   22 shots u8 (fired in this op mode) | 23 refused u8 (fire requests ignored: enable not held)
+ *   24 launcher_cmd_rpm i16 (the speed the robot chose, e.g. from its distance table)
  *
  * RoadRunner field frame: inches and radians. Keep in step with the UNO Q sketch.
  */
 public class UnoQRobotState {
-    public static final int LENGTH = 24;
+    public static final int LENGTH = 26;
 
     // mode, bits 0-3: which op mode is writing
     public static final int MODE_NONE = 0;
@@ -32,7 +33,7 @@ public class UnoQRobotState {
     public int seq;
     public double xIn, yIn, headingRad, vxInPerS, vyInPerS, omegaRadPerS;
     public int opMode, flags, ackFireSeq;
-    public double turretDeg, turretTargetDeg, launcherRpm;
+    public double turretDeg, turretTargetDeg, launcherRpm, launcherCommandRpm;
     public int shots, refused;
 
     public byte[] toBytes() {
@@ -51,6 +52,7 @@ public class UnoQRobotState {
         b.putShort(clamp16(launcherRpm));
         b.put((byte) Math.min(shots, 255));
         b.put((byte) Math.min(refused, 255));
+        b.putShort(clamp16(launcherCommandRpm));
         return b.array();
     }
 
@@ -61,6 +63,7 @@ public class UnoQRobotState {
         c.vxInPerS = vxInPerS; c.vyInPerS = vyInPerS; c.omegaRadPerS = omegaRadPerS;
         c.opMode = opMode; c.flags = flags; c.ackFireSeq = ackFireSeq;
         c.turretDeg = turretDeg; c.turretTargetDeg = turretTargetDeg; c.launcherRpm = launcherRpm;
+        c.launcherCommandRpm = launcherCommandRpm;
         c.shots = shots; c.refused = refused;
         return c;
     }

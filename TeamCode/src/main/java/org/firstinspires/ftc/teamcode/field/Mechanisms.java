@@ -11,6 +11,14 @@ public interface Mechanisms {
     /** Launch the loaded POLLEN. aimDegrees: turret angle off RouteTuning.launchFacing; always 0 for a fixed launcher. */
     Action launch(double aimDegrees);
 
+    /**
+     * Launch at a known distance (horizontal, launcher to the CELL opening, inches). A robot with a
+     * launcher speed table overrides this to pick the speed for the distance; the default ignores it.
+     */
+    default Action launch(double aimDegrees, double distanceIn) {
+        return launch(aimDegrees);
+    }
+
     /** Pick up POLLEN with one intake. side: index into RouteTuning.intakeSides. */
     Action intake(int side);
 
