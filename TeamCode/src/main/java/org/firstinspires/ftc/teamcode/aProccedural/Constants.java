@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Constants {
     public static double launcher_Idle_Velocity = 500;
-    public static double launcher_Launching_Velocity = 1500;
-    public static double launch_Threshold = 150;
+    public static double launcher_Launching_Velocity = 1300;
+    public static double launch_Threshold = 50;
 
     // Launcher Custom PIDF Coefficients
     public static double launcher_kP = 0.0008; // Do not change 0.0008

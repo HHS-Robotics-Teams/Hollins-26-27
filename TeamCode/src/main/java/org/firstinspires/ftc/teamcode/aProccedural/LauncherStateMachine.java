@@ -103,11 +103,13 @@ public class LauncherStateMachine {
 
                 case SPIN_UP:
                     targetVelocity = launcher_Launching_Velocity;
+                    launcher.setVelocity(targetVelocity);
                     counterRoller.setPower(1);
+                    conveyor.setPower(0);
                     //kicker.setPosition(0.0);
-                    if (abs(launcher.getVelocity() - targetVelocity) <= launch_Threshold){
-                        setState(State.LAUNCHING);
-                    }
+//                    if (abs(launcher.getVelocity() - targetVelocity) <= launch_Threshold){
+//                        setState(State.LAUNCHING);
+//                    }
                     break;
 
                 case LAUNCHING:
@@ -211,8 +213,8 @@ public class LauncherStateMachine {
     }
 
     public boolean isSpunUp() {
-        return (currentState == State.SPIN_UP || currentState == State.LAUNCHING)
-                && (launcher.getVelocity() >= launcher_Launching_Velocity * 0.9 || stateTimer.seconds() >= spinUpTimeSeconds);
+        return ((currentState == State.SPIN_UP || currentState == State.LAUNCHING)
+                && (abs(launcher.getVelocity() - targetVelocity) <= launch_Threshold ));  //|| stateTimer.seconds() >= spinUpTimeSeconds
     }
 
 }

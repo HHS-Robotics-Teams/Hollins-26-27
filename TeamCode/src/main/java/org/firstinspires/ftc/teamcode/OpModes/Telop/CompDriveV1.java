@@ -25,13 +25,13 @@ public class CompDriveV1 extends OpMode {
     private LauncherStateMachine launcherSM;
     private TurretStateMachine turretSM;
 
-    private final ElapsedTime depollenatorTimer = new ElapsedTime();
-    private double depollenatorTargetPower = 0.0;
-    private boolean gp2RightBumperLast = false;
-    private boolean gp2LeftBumperLast = false;
-
+    private boolean intakeLiftUp = false;
     private final ElapsedTime intakeLiftTimer = new ElapsedTime();
     private double intakeLiftTargetPower = 0.0;
+
+    private boolean depollenatorExtended = false;
+    private final ElapsedTime depollenatorTimer = new ElapsedTime();
+    private double depollenatorTargetPower = 0.0;
 
     @Override
     public void init() {
@@ -51,7 +51,7 @@ public class CompDriveV1 extends OpMode {
         input.pollGamepad(gamepad1);
 
         // Drivetrain controls
-        TeleOpDrive.run(gamepad1.left_stick_y, -gamepad1.left_stick_x * 1.1, -gamepad1.right_stick_x);
+        TeleOpDrive.run(gamepad1.left_stick_y, -gamepad1.left_stick_x * 1, -gamepad1.right_stick_x);
 
         // --- Turret Preset Positions (D-Pad via TurretStateMachine) ---
         if (input.dpad_up.down()) {
@@ -64,22 +64,20 @@ public class CompDriveV1 extends OpMode {
             turretSM.setState(TurretStateMachine.State.BACKWARD);
         }
 
-        // --- Turret Fine Adjustments (Bumpers: bounded between min/max limit) ---
-        if (input.left_bumper.held()) {
-            turretSM.adjustTargetPosition(-10);
-        } else if (input.right_bumper.held()) {
-            turretSM.adjustTargetPosition(10);
-        }
+//        // --- Turret Fine Adjustments (Bumpers: bounded between min/max limit) ---
+//        if (input.left_bumper.held()) {
+//            turretSM.adjustTargetPosition(-10);
+//        } else if (input.right_bumper.held()) {
+//            turretSM.adjustTargetPosition(10);
+//        }
 
         // Keep Launcher state machine informed of active target position
         launcherSM.setTurretTargetPosition(turretSM.getTargetPosition());
 
-        // --- Intake Lift Control (Strictly timed for IntakeMove_time) ---
+        // --- Intake Lift Toggle (Square / X button) ---
         if (input.left_bumper.down()) {
-            intakeLiftTargetPower = 1.0;
-            intakeLiftTimer.reset();
-        } else if (input.right_bumper.down()) {
-            intakeLiftTargetPower = -1.0;
+            intakeLiftUp = !intakeLiftUp;
+            intakeLiftTargetPower = intakeLiftUp ? 1.0 : -1.0;
             intakeLiftTimer.reset();
         }
 
@@ -91,13 +89,10 @@ public class CompDriveV1 extends OpMode {
             }
         }
 
-        // --- Depollenator Control (Strictly timed for DePollenator_time) ---
-
-        if (input.cross_A.down()) {
-            depollenatorTargetPower = 1.0;
-            depollenatorTimer.reset();
-        } else if (input.delta_Y.down()) {
-            depollenatorTargetPower = -1.0;
+        // --- Depollenator Toggle (Delta / Y button) ---
+        if (input.right_bumper.down() ) {
+            depollenatorExtended = !depollenatorExtended;
+            depollenatorTargetPower = depollenatorExtended ? 1.0 : -1.0;
             depollenatorTimer.reset();
         }
 
@@ -126,9 +121,6 @@ public class CompDriveV1 extends OpMode {
         } else if (input.left_trigger.held()) {
             // Left Trigger -> Intake mode
             launcherSM.intake();
-        } else if (input.x.held() || input.square_X.held()) {
-            // X Button -> Aim mode
-            launcherSM.aim(turretSM.getTargetPosition());
         } else {
             // Default -> Return to Idle state
             launcherSM.idle();
@@ -145,10 +137,10 @@ public class CompDriveV1 extends OpMode {
         telemetry.addData("Turret Target Pos", turretSM.getTargetPosition());
         telemetry.addData("Turret Current Pos", turretSM.getCurrentPosition());
         telemetry.addData("Turret Bounds", "[%d to %d]", TurretStateMachine.TURRET_MIN_LIMIT, TurretStateMachine.TURRET_MAX_LIMIT);
+        telemetry.addData("Intake Lift Up", intakeLiftUp);
         telemetry.addData("Intake Lift Power", intakeLift != null ? intakeLift.getPower() : 0);
-        telemetry.addData("Intake Lift Timer", "%.2fs / %.2fs", intakeLiftTimer.seconds(), IntakeMove_time);
+        telemetry.addData("Depollenator Extended", depollenatorExtended);
         telemetry.addData("Depollenator Power", depollenator != null ? depollenator.getPower() : 0);
-        telemetry.addData("Depollenator Timer", "%.2fs / %.2fs", depollenatorTimer.seconds(), DePollenator_time);
         telemetry.addData("Intake Reversed", launcherSM.isIntakeReversed());
         telemetry.addData("Launcher Velocity", launcher.getVelocity());
         telemetry.addData("Spin up Timer", spinUpTime.seconds());
