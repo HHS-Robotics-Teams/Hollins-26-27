@@ -25,6 +25,15 @@ android {
         }
         jniLibs.useLegacyPackaging true
     }
+
+    // Meet build: FTC does not allow co-processors on the robot, so a meet build leaves out all
+    // UNO Q code (teamcode/unoq/). Build with -PmeetBuild (tools/meet-build.sh). Main code must
+    // never import from unoq/; the meet build failing to compile is how that rule is checked.
+    // -PmeetBuild or -PmeetBuild=true turns it on; absent or false leaves it off.
+    def meet = project.findProperty('meetBuild')
+    if (meet != null && meet.toString() != 'false') {
+        sourceSets.main.java.filter.exclude('**/unoq/**')
+    }
 }
 
 dependencies {
