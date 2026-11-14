@@ -30,6 +30,7 @@ public class UnoQFrame {
 
     public final byte[] raw;
     public final double readMs;
+    public int bytesRead;        // how many bytes the I2C read returned (may be less than the block)
 
     public int version, status, frame, ageMs, robotSeqEcho, tagCount, ballCount;
     public int checksum, computedChecksum;
@@ -46,11 +47,12 @@ public class UnoQFrame {
     private UnoQFrame(byte[] raw, double readMs) {
         this.raw = raw;
         this.readMs = readMs;
+        this.bytesRead = raw.length;
     }
 
     /** Checksum matches and the version is ours: the bytes are trustworthy. */
     public boolean isValid() {
-        return raw.length == UnoQ.MAIN_LENGTH && version == UnoQ.PROTOCOL_VERSION && checksum == computedChecksum;
+        return bytesRead == UnoQ.MAIN_LENGTH && version == UnoQ.PROTOCOL_VERSION && checksum == computedChecksum;
     }
 
     /** All 0x00 or all 0xFF: nothing answered (wiring, address, or the sketch isn't running). */

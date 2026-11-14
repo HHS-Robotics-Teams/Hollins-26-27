@@ -72,21 +72,47 @@ public class UnoQ extends I2cDeviceSynchDevice<I2cDeviceSynch> {
         return "Arduino UNO Q Vision";
     }
 
-    /** Bus speed of the hub port (REV hubs only). 400 kHz halves the read time; both ends must cope. */
-    public void setFastBus(boolean fast) {
+    /**
+     * Bus speed of the hub port (REV hubs only). Returns true if the hub accepted the change.
+     * Note: on a REV hub a read is a start command plus status polls over the hub's serial link, so
+     * most of the read time is round trips; bus speed only shortens the bytes-on-the-wire part.
+     */
+    public boolean setFastBus(boolean fast) {
         if (deviceClient instanceof LynxI2cDeviceSynch) {
             ((LynxI2cDeviceSynch) deviceClient).setBusSpeed(fast
                     ? LynxI2cDeviceSynch.BusSpeed.FAST_400K
                     : LynxI2cDeviceSynch.BusSpeed.STANDARD_100K);
+            return true;
         }
+        return false;
     }
 
-    /** Read the main block (header, tags, balls). One I2C transaction. */
+    /** Class of the underlying I2C client (for diagnostics). */
+    public String clientType() {
+        return deviceClient.getClass().getSimpleName();
+    }
+
+    /** Read the main block (header, tags, balls). One I2C read. */
     public UnoQFrame read() {
+        return read(MAIN_LENGTH);
+    }
+
+    /**
+     * Read the first {@code length} bytes of the out block (header 12 + 12 per tag ...). Bytes not read
+     * stay zero; the checksum only validates when the whole main block (92) is read.
+     */
+    public UnoQFrame read(int length) {
         long t0 = System.nanoTime();
-        byte[] raw = deviceClient.read(REG_HEADER, MAIN_LENGTH);
+        byte[] raw = deviceClient.read(REG_HEADER, length);
         long t1 = System.nanoTime();
-        return UnoQFrame.parse(raw, (t1 - t0) / 1e6);
+        byte[] full = raw;
+        if (raw.length < MAIN_LENGTH) {
+            full = new byte[MAIN_LENGTH];
+            System.arraycopy(raw, 0, full, 0, raw.length);
+        }
+        UnoQFrame f = UnoQFrame.parse(full, (t1 - t0) / 1e6);
+        f.bytesRead = raw.length;
+        return f;
     }
 
     /** Read the extra block (field pose, path target) into an existing frame. Second I2C transaction. */

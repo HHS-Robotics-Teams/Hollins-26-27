@@ -18,7 +18,8 @@ import java.util.Locale;
  * Wiring: hub I2C port pin 1 GND, 3 SDA, 4 SCL to the UNO Q (pin 2, 3.3 V, NOT connected; the UNO Q has
  * its own 5 V supply). Config: I2C device "UNO Q Vision" named "unoq" on that port's bus.
  *
- * Buttons: A = 100 / 400 kHz bus, X = also read the extra block (field pose + target), B = reset stats.
+ * Buttons: A = 100 / 400 kHz bus, X = also read the extra block (field pose + target), B = reset stats,
+ * Y = read size 92 / 36 / 12 bytes (header + tags; compare times to split hub overhead from wire time).
  * Pass for M6: 5 minutes with 0 errors, frame counter advancing, robot_seq lag <= 2.
  */
 @TeleOp(name = "UNO Q I2C test", group = "Testing")
@@ -32,22 +33,27 @@ public class UnoQI2cTest extends LinearOpMode {
         UnoQ unoq = hardwareMap.get(UnoQ.class, "unoq");
 
         boolean fast = false, extra = false;
-        boolean lastA = false, lastX = false, lastB = false;
-        unoq.setFastBus(fast);
+        boolean lastA = false, lastX = false, lastB = false, lastY = false;
+        final int[] sizes = {UnoQ.MAIN_LENGTH, 36, 12};
+        int sizeIdx = 0;
+        boolean speedApplied = unoq.setFastBus(fast);
 
         Stats s = new Stats();
         int robotSeq = 0;
 
-        telemetry.addLine("UNO Q I2C test ready. A: 100/400 kHz  X: extra block  B: reset stats");
+        telemetry.addLine("UNO Q I2C test ready. A: 100/400 kHz  X: extra block  B: reset stats  Y: read size");
+        telemetry.addData("client", unoq.clientType());
         telemetry.update();
         waitForStart();
         s.reset();
 
         while (opModeIsActive()) {
-            if (gamepad1.a && !lastA) { fast = !fast; unoq.setFastBus(fast); s.reset(); }
+            if (gamepad1.a && !lastA) { fast = !fast; speedApplied = unoq.setFastBus(fast); s.reset(); }
             if (gamepad1.x && !lastX) { extra = !extra; s.reset(); }
             if (gamepad1.b && !lastB) s.reset();
-            lastA = gamepad1.a; lastX = gamepad1.x; lastB = gamepad1.b;
+            if (gamepad1.y && !lastY) { sizeIdx = (sizeIdx + 1) % sizes.length; s.reset(); }
+            lastA = gamepad1.a; lastX = gamepad1.x; lastB = gamepad1.b; lastY = gamepad1.y;
+            int size = sizes[sizeIdx];
 
             // write: sequence number + a fake pose that changes slowly, so the UNO Q page shows it moving
             robotSeq = (robotSeq + 1) & 0xFFFF;
@@ -63,7 +69,7 @@ public class UnoQI2cTest extends LinearOpMode {
             // read
             UnoQFrame f;
             try {
-                f = unoq.read();
+                f = unoq.read(size);
                 if (extra) unoq.readExtra(f);
             } catch (RuntimeException e) {
                 s.exceptions++;
@@ -71,12 +77,15 @@ public class UnoQI2cTest extends LinearOpMode {
                 continue;
             }
             s.add(f, robotSeq);
-            show(f, s, fast, extra, robotSeq);
+            show(f, s, fast, extra, robotSeq, size, speedApplied, unoq.clientType());
         }
     }
 
-    private void show(UnoQFrame f, Stats s, boolean fast, boolean extra, int robotSeq) {
-        telemetry.addData("bus", "%s kHz%s   (A toggles, X extra, B reset)", fast ? "400" : "100", extra ? " +extra" : "");
+    private void show(UnoQFrame f, Stats s, boolean fast, boolean extra, int robotSeq, int size,
+                      boolean speedApplied, String client) {
+        telemetry.addData("bus", "%s kHz (%s)  read %d bytes%s   A speed, Y size, X extra, B reset",
+                fast ? "400" : "100", speedApplied ? "applied" : "NOT applied: " + client, size,
+                extra ? " +extra" : "");
         telemetry.addData("reads", "%d in %.1f s = %.1f /s", s.reads, s.elapsedS(), s.reads / Math.max(s.elapsedS(), 1e-3));
         telemetry.addData("read ms", "avg %.2f  max %.2f   write ms avg %.2f", s.readMs.avg(), s.readMs.max, s.writeMs.avg());
         telemetry.addData("ERRORS", "checksum %d  version %d  no-answer %d  exceptions %d",
@@ -133,7 +142,7 @@ public class UnoQI2cTest extends LinearOpMode {
             readMs.add(f.readMs);
             if (f.looksDisconnected()) { disconnected++; return; }
             if (f.version != UnoQ.PROTOCOL_VERSION) badVersion++;
-            else if (f.checksum != f.computedChecksum) badChecksum++;
+            else if (f.bytesRead == UnoQ.MAIN_LENGTH && f.checksum != f.computedChecksum) badChecksum++;   // short reads: no checksum
             if (lastFrame >= 0) {
                 int d = (f.frame - lastFrame) & 0xFFFF;
                 if (d == 0) sameFrame++;
