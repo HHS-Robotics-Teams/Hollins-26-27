@@ -24,6 +24,7 @@ public class UnoQRobotState {
     public static final int MODE_NONE = 0;
     public static final int MODE_UNO_TEST_TELEOP = 1;   // camera on the UNO Q; it sends turret + fire
     public static final int MODE_BOT_TEST_FIRE = 2;     // camera on the robot; robot computes and fires
+    public static final int MODE_NO_TURRET_TEST = 3;    // camera on the UNO Q; robot turns its chassis to aim
     // mode, flag bits
     public static final int CAMERA_ON_ROBOT = 0x10;
     public static final int FIRE_ENABLED = 0x20;        // driver is holding the fire-enable button

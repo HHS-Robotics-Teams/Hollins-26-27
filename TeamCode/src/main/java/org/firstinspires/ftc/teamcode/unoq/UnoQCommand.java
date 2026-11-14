@@ -20,6 +20,9 @@ public class UnoQCommand {
     public static final int FLAG_CAMERA_ON_UNOQ = 0x02; // the UNO Q has the camera (and is aiming)
     public static final int FLAG_LINUX_OK = 0x04;       // the UNO Q's Linux side is updating the command
     public static final int FLAG_DISTANCE_VALID = 0x08; // distance is set
+    /** turret_target is an ABSOLUTE ROBOT HEADING (deg, RoadRunner, CCW+), not a turret angle:
+     *  for robots without a turret, which aim by turning the chassis (NoTurretTestOp). */
+    public static final int FLAG_HEADING_TARGET = 0x10;
 
     public final byte[] raw;
     public final double readMs;

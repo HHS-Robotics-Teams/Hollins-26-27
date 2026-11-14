@@ -18,9 +18,10 @@ import java.util.Locale;
 /**
  * PRACTICE ONLY (not in meet builds). Camera on the UNO Q: the UNO Q aims and asks the robot to fire.
  *
- * The robot drives normally (same sticks as "Drive"). A background thread talks to the UNO Q over
- * I2C (protocol 2): it writes the robot's state (pose, velocity, turret, shots) and reads the UNO Q's
- * short command block (turret target + fire requests). The main loop never waits on I2C.
+ * The robot drives normally (same sticks as "Drive"). A background thread ({@link UnoQLink}) talks
+ * to the UNO Q over I2C (protocol 2): it writes the robot's state (pose, velocity, turret, shots) and
+ * reads the UNO Q's short command block (turret target, distance, fire requests). The main loop
+ * never waits on I2C.
  *
  * Firing: each new fire request from the UNO Q fires ONCE, through this robot's
  * Mechanisms.launch(turret target, distance) (the robot picks the launcher speed for the distance
@@ -35,14 +36,7 @@ import java.util.Locale;
 @TeleOp(name = "UnoTestTeleOp", group = "UNO Q")
 public class UnoTestTeleOp extends LinearOpMode {
     static final int MAX_COMMAND_AGE_MS = 300;
-    static final long LINK_PERIOD_MS = 20;          // ~50 Hz: one 26-byte write + one 10-byte read
     static final double DEADBAND = 0.05, SLOW_SCALE = 0.35;
-
-    private final UnoQRobotState state = new UnoQRobotState();
-    private volatile UnoQCommand lastCommand;
-    private volatile String linkError = "";
-    private volatile double linkHz, writeMs, readMs;
-    private volatile int linkErrors;
 
     @Override
     public void runOpMode() {
@@ -52,6 +46,8 @@ public class UnoTestTeleOp extends LinearOpMode {
         UnoQ unoq = hardwareMap.get(UnoQ.class, "unoq");
         unoq.setFastBus(true);   // no faster on REV hubs (see M6), but harmless
 
+        UnoQLink link = new UnoQLink(unoq);
+        UnoQRobotState state = link.state;
         state.opMode = UnoQRobotState.MODE_UNO_TEST_TELEOP;
 
         telemetry.addData("Robot", robot.tag + " (" + robot.configName + ")");
@@ -59,15 +55,11 @@ public class UnoTestTeleOp extends LinearOpMode {
         telemetry.addLine("Camera on the UNO Q. Hold RIGHT BUMPER to allow the UNO Q to fire.");
         telemetry.update();
 
-        Thread link = new Thread(() -> linkLoop(unoq), "UnoQLink");
-        link.setDaemon(true);
-        link.start();
-
+        link.start(this::isStopRequested);
         waitForStart();
 
-        Integer lastFireSeq = null;   // fire requests already pending at start are not fired
+        FireGate fire = new FireGate();
         Action launch = null;
-        String lastEvent = "";
 
         while (opModeIsActive()) {
             double scale = gamepad1.left_bumper ? SLOW_SCALE : 1.0;
@@ -78,30 +70,12 @@ public class UnoTestTeleOp extends LinearOpMode {
             Pose2d pose = drive.localizer.getPose();
             boolean fireEnabled = gamepad1.right_bumper;
 
-            UnoQCommand cmd = lastCommand;
+            UnoQCommand cmd = link.command();
             boolean fresh = cmd != null && cmd.isFresh(MAX_COMMAND_AGE_MS);
             double turretTarget = fresh && cmd.flag(UnoQCommand.FLAG_TURRET_VALID) ? cmd.turretTargetDeg : 0;
-            boolean haveDistance = fresh && cmd.flag(UnoQCommand.FLAG_DISTANCE_VALID);
 
-            if (fresh) {
-                if (lastFireSeq == null) {
-                    lastFireSeq = cmd.fireSeq;
-                } else if (cmd.fireSeq != lastFireSeq) {
-                    lastFireSeq = cmd.fireSeq;
-                    if (!fireEnabled) {
-                        synchronized (state) { state.refused++; }
-                        lastEvent = "fire " + cmd.fireSeq + " REFUSED (hold right bumper)";
-                    } else if (launch != null) {
-                        synchronized (state) { state.refused++; }
-                        lastEvent = "fire " + cmd.fireSeq + " refused: still launching";
-                    } else {
-                        launch = haveDistance ? mechanisms.launch(turretTarget, cmd.distanceIn)
-                                              : mechanisms.launch(turretTarget);
-                        synchronized (state) { state.shots++; state.ackFireSeq = cmd.fireSeq; }
-                        lastEvent = String.format(Locale.US, "fire %d at %.1f deg, %s", cmd.fireSeq, turretTarget,
-                                haveDistance ? String.format(Locale.US, "%.1f in", cmd.distanceIn) : "no distance");
-                    }
-                }
+            if (fire.check(cmd, fresh, fireEnabled, launch != null, state)) {
+                launch = fire.launch(mechanisms, cmd, turretTarget);
             }
             if (launch != null && !launch.run(new TelemetryPacket())) launch = null;
 
@@ -118,54 +92,58 @@ public class UnoTestTeleOp extends LinearOpMode {
             }
 
             telemetry.addData("Fire enable (RB)", fireEnabled ? "HELD" : "up");
-            telemetry.addData("UNO Q command", cmd == null ? "none yet"
-                    : String.format(Locale.US, "%s  age %d ms  turret %.1f deg  dist %s  fire_seq %d  camera %s",
-                    fresh ? "fresh" : (cmd.isValid() ? "STALE" : "INVALID"), cmd.ageMs, cmd.turretTargetDeg,
-                    cmd.flag(UnoQCommand.FLAG_DISTANCE_VALID) ? String.format(Locale.US, "%.1f in", cmd.distanceIn) : "none",
-                    cmd.fireSeq, cmd.flag(UnoQCommand.FLAG_CAMERA_ON_UNOQ) ? "on UNO Q" : "not on UNO Q"));
+            telemetry.addData("UNO Q command", UnoQLink.describe(cmd, MAX_COMMAND_AGE_MS));
             telemetry.addData("Shots / refused", state.shots + " / " + state.refused + (launch != null ? "  (launching)" : ""));
-            telemetry.addData("Last", lastEvent);
-            telemetry.addData("Link", String.format(Locale.US, "%.0f Hz  write %.1f ms  read %.1f ms  errors %d %s",
-                    linkHz, writeMs, readMs, linkErrors, linkError));
+            telemetry.addData("Last", fire.lastEvent);
+            telemetry.addData("Link", link.describe());
             telemetry.addData("Pose", String.format(Locale.US, "x %.1f  y %.1f in  %.1f deg",
                     pose.position.x, pose.position.y, Math.toDegrees(pose.heading.toDouble())));
             telemetry.update();
         }
     }
 
-    /** Background I2C: write the state, read the command, ~50 Hz. Never blocks the drive loop. */
-    private void linkLoop(UnoQ unoq) {
-        long windowStart = System.nanoTime();
-        int count = 0;
-        while (!isStopRequested()) {
-            long t0 = System.nanoTime();
-            try {
-                UnoQRobotState snap;
-                synchronized (state) { snap = state.copy(); }
-                unoq.writeRobotState(snap);
-                long t1 = System.nanoTime();
-                UnoQCommand cmd = unoq.readCommand();
-                writeMs = (t1 - t0) / 1e6;
-                readMs = cmd.readMs;
-                lastCommand = cmd;
-                linkError = "";
-            } catch (RuntimeException e) {
-                linkErrors++;
-                linkError = e.getClass().getSimpleName();
-            }
-            count++;
-            long now = System.nanoTime();
-            if (now - windowStart >= 1_000_000_000L) {
-                linkHz = count * 1e9 / (now - windowStart);
-                count = 0;
-                windowStart = now;
-            }
-            long sleepMs = LINK_PERIOD_MS - (System.nanoTime() - t0) / 1_000_000;
-            if (sleepMs > 0) sleep(sleepMs);
-        }
+    static double deadband(double v) {
+        return Math.abs(v) < DEADBAND ? 0 : v;
     }
 
-    private static double deadband(double v) {
-        return Math.abs(v) < DEADBAND ? 0 : v;
+    /**
+     * The fire-once rule shared by the practice op modes: each NEW fire_seq from a fresh command fires
+     * once, only while fire enable is held and no launch is running; otherwise it is counted as
+     * refused and dropped. Requests already pending when the op mode starts are ignored.
+     */
+    static final class FireGate {
+        private Integer lastFireSeq = null;
+        String lastEvent = "";
+
+        /** True when this command is a new fire request that should fire now (counts are updated). */
+        boolean check(UnoQCommand cmd, boolean fresh, boolean enabled, boolean launching, UnoQRobotState state) {
+            if (!fresh) return false;
+            if (lastFireSeq == null) {
+                lastFireSeq = cmd.fireSeq;
+                return false;
+            }
+            if (cmd.fireSeq == lastFireSeq) return false;
+            lastFireSeq = cmd.fireSeq;
+            if (!enabled) {
+                synchronized (state) { state.refused++; }
+                lastEvent = "fire " + cmd.fireSeq + " REFUSED (hold right bumper)";
+                return false;
+            }
+            if (launching) {
+                synchronized (state) { state.refused++; }
+                lastEvent = "fire " + cmd.fireSeq + " refused: still launching";
+                return false;
+            }
+            synchronized (state) { state.shots++; state.ackFireSeq = cmd.fireSeq; }
+            return true;
+        }
+
+        /** Start the launch for an accepted request, with the distance when the UNO Q sent one. */
+        Action launch(Mechanisms mechanisms, UnoQCommand cmd, double aimDeg) {
+            boolean haveDistance = cmd.flag(UnoQCommand.FLAG_DISTANCE_VALID);
+            lastEvent = String.format(Locale.US, "fire %d at %.1f deg, %s", cmd.fireSeq, aimDeg,
+                    haveDistance ? String.format(Locale.US, "%.1f in", cmd.distanceIn) : "no distance");
+            return haveDistance ? mechanisms.launch(aimDeg, cmd.distanceIn) : mechanisms.launch(aimDeg);
+        }
     }
 }
