@@ -5,10 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.conveyor;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.counterRoller;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.intakeFront;
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.kicker;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.launcher;
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.leftFeedRoller;
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.rightFeedRoller;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.turret;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.LaunchingPower;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.CounterRollerPower;
@@ -87,7 +84,7 @@ public class LauncherStateMachine {
                     targetVelocity = launcher_Idle_Velocity;
                     intakeFront.setPower(0);
                     conveyor.setPower(0);
-                    kicker.setPosition(0.0);
+                    //kicker.setPosition(0.0);
                     break;
 
                 case INTAKE:
@@ -107,7 +104,7 @@ public class LauncherStateMachine {
                 case SPIN_UP:
                     targetVelocity = launcher_Launching_Velocity;
                     counterRoller.setPower(1);
-                    kicker.setPosition(0.0);
+                    //kicker.setPosition(0.0);
                     if (abs(launcher.getVelocity() - targetVelocity) <= launch_Threshold){
                         setState(State.LAUNCHING);
                     }
@@ -115,7 +112,7 @@ public class LauncherStateMachine {
 
                 case LAUNCHING:
                     counterRoller.setPower(1);
-                    kicker.setPosition(1.0);
+                    //kicker.setPosition(1.0);
                     intakeFront.setPower(intake_Power);
                     conveyor.setPower(intake_Power);
                     break;

@@ -21,6 +21,7 @@ public class Intake_test extends OpMode {
 
     @Override
     public void init() {
+
         intakeFront = hardwareMap.get(DcMotor.class, "intakeFront");
         intakeFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intakeFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.OpModes.Telop;
 
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.depollenator;
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.intakeLift;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.launcher;
+import static org.firstinspires.ftc.teamcode.aProccedural.Constants.DePollenator_time;
+import static org.firstinspires.ftc.teamcode.aProccedural.Constants.IntakeMove_time;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.reset_Motors;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.spinUpTime;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Util.TeleOpDrive;
 import org.firstinspires.ftc.teamcode.aProccedural.Components;
@@ -20,6 +25,14 @@ public class CompDriveV1 extends OpMode {
     private LauncherStateMachine launcherSM;
     private TurretStateMachine turretSM;
 
+    private final ElapsedTime depollenatorTimer = new ElapsedTime();
+    private double depollenatorTargetPower = 0.0;
+    private boolean gp2RightBumperLast = false;
+    private boolean gp2LeftBumperLast = false;
+
+    private final ElapsedTime intakeLiftTimer = new ElapsedTime();
+    private double intakeLiftTargetPower = 0.0;
+
     @Override
     public void init() {
         Components.initComponents(hardwareMap);
@@ -28,6 +41,9 @@ public class CompDriveV1 extends OpMode {
         input = new Input();
         launcherSM = new LauncherStateMachine();
         turretSM = new TurretStateMachine();
+
+        depollenatorTimer.reset();
+        intakeLiftTimer.reset();
     }
 
     @Override
@@ -57,6 +73,41 @@ public class CompDriveV1 extends OpMode {
 
         // Keep Launcher state machine informed of active target position
         launcherSM.setTurretTargetPosition(turretSM.getTargetPosition());
+
+        // --- Intake Lift Control (Strictly timed for IntakeMove_time) ---
+        if (input.left_bumper.down()) {
+            intakeLiftTargetPower = 1.0;
+            intakeLiftTimer.reset();
+        } else if (input.right_bumper.down()) {
+            intakeLiftTargetPower = -1.0;
+            intakeLiftTimer.reset();
+        }
+
+        if (intakeLift != null) {
+            if (intakeLiftTimer.seconds() < IntakeMove_time) {
+                intakeLift.setPower(intakeLiftTargetPower);
+            } else {
+                intakeLift.setPower(0.0);
+            }
+        }
+
+        // --- Depollenator Control (Strictly timed for DePollenator_time) ---
+
+        if (input.cross_A.down()) {
+            depollenatorTargetPower = 1.0;
+            depollenatorTimer.reset();
+        } else if (input.delta_Y.down()) {
+            depollenatorTargetPower = -1.0;
+            depollenatorTimer.reset();
+        }
+
+        if (depollenator != null) {
+            if (depollenatorTimer.seconds() < DePollenator_time) {
+                depollenator.setPower(depollenatorTargetPower);
+            } else {
+                depollenator.setPower(0.0);
+            }
+        }
 
         // --- Toggle Intake Direction ---
         if (input.circle_B.down() || input.b.down()) {
@@ -94,6 +145,10 @@ public class CompDriveV1 extends OpMode {
         telemetry.addData("Turret Target Pos", turretSM.getTargetPosition());
         telemetry.addData("Turret Current Pos", turretSM.getCurrentPosition());
         telemetry.addData("Turret Bounds", "[%d to %d]", TurretStateMachine.TURRET_MIN_LIMIT, TurretStateMachine.TURRET_MAX_LIMIT);
+        telemetry.addData("Intake Lift Power", intakeLift != null ? intakeLift.getPower() : 0);
+        telemetry.addData("Intake Lift Timer", "%.2fs / %.2fs", intakeLiftTimer.seconds(), IntakeMove_time);
+        telemetry.addData("Depollenator Power", depollenator != null ? depollenator.getPower() : 0);
+        telemetry.addData("Depollenator Timer", "%.2fs / %.2fs", depollenatorTimer.seconds(), DePollenator_time);
         telemetry.addData("Intake Reversed", launcherSM.isIntakeReversed());
         telemetry.addData("Launcher Velocity", launcher.getVelocity());
         telemetry.addData("Spin up Timer", spinUpTime.seconds());

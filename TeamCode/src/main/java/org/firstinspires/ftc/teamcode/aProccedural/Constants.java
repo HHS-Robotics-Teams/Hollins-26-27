@@ -12,10 +12,10 @@ public class Constants {
     public static double launch_Threshold = 150;
 
     // Launcher Custom PIDF Coefficients
-    public static double launcher_kP = 0.0008; // Do not change
-    public static double launcher_kI = 0.0001; // Do not change
-    public static double launcher_kD = 0.000080; // Do not change
-    public static double launcher_kF = 0.000420; // Do not change
+    public static double launcher_kP = 0.0008; // Do not change 0.0008
+    public static double launcher_kI = 0.0001; // Do not change 0.0001
+    public static double launcher_kD = 0.000080; // Do not change 0.000080
+    public static double launcher_kF = 0.000420; // Do not change 0.000420
 
     public static double turret_Power = 0.5;
     public static int intake_Power = 1;
@@ -35,6 +35,10 @@ public class Constants {
     public static boolean INTAKE_FEED_ROLLERS = false;
     public static double LaunchingPower;
     public static double CounterRollerPower;
+
+    public static double DePollenator_time = 1.72;
+
+    public static double IntakeMove_time = 1.00;
 
     public static ElapsedTime spinUpTime = new ElapsedTime();
 

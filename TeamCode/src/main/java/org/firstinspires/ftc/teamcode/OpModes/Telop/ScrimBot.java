@@ -2,10 +2,10 @@ package org.firstinspires.ftc.teamcode.OpModes.Telop;
 
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.conveyor;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.intakeFront;
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.kicker;
+
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.launcher;
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.leftFeedRoller;
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.rightFeedRoller;
+
+
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.turret;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.INTAKE_FEED_ROLLERS;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.INTAKE_RUN;
@@ -103,15 +103,7 @@ public class ScrimBot extends OpMode {
             conveyor.setPower(0);
         }
 
-        if (INTAKE_FEED_ROLLERS) {
-            rightFeedRoller.setPower(INTAKE_REVERSED ? -1 : 1);
-            leftFeedRoller.setPower(INTAKE_REVERSED ? -1 : 1);
-            kicker.setPosition(INTAKE_REVERSED ? 0.0 : 1.0);
-        } else {
-            rightFeedRoller.setPower(0);
-            leftFeedRoller.setPower(0);
-            kicker.setPosition(0.0);
-        }
+
 
 
     }
