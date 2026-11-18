@@ -14,7 +14,7 @@ public class Constants {
     // Launcher Custom PIDF Coefficients
     public static double launcher_kP = 0.0008; // Do not change 0.0008
     public static double launcher_kI = 0.0001; // Do not change 0.0001
-    public static double launcher_kD = 0.000080; // Do not change 0.000080
+    public static double launcher_kD = 0.000110; // Do not change 0.000080
     public static double launcher_kF = 0.000420; // Do not change 0.000420
 
     public static double turret_Power = 0.5;

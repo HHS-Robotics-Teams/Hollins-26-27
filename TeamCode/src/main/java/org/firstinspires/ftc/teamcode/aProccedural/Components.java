@@ -67,7 +67,7 @@ public class Components {
 
                 // Initialize counter roller
                 counterRoller = hardwareMap.get(CRServo.class, "counterRoller");
-                counterRoller.setDirection(DcMotorSimple.Direction.REVERSE);
+                counterRoller.setDirection(DcMotorSimple.Direction.FORWARD);
 
                 intakeLift = hardwareMap.get(CRServo.class, "intakeLift");
 
