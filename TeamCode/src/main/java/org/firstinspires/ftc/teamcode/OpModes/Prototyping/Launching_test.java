@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.OpModes.Prototyping;
 
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.conveyor;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.counterRoller;
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.intakeFront;import static org.firstinspires.ftc.teamcode.aProccedural.Components.launcher;
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.intakeFront;
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.launcher;
 
 import org.firstinspires.ftc.teamcode.aProccedural.Components;
 import org.firstinspires.ftc.teamcode.aProccedural.LauncherStateMachine;
@@ -67,9 +69,11 @@ public class Launching_test extends OpMode {
         }
         if (input.left_trigger.held()) {
             intakeFront.setPower(1);
+            conveyor.setPower(1);
         }
         if (input.left_trigger.up()){
             intakeFront.setPower(0);
+            conveyor.setPower(0);
         }
         telemetry.addData("Launching Power",LaunchingPower);
         telemetry.addData("Launching Velocity", LaunchingTestVelocity);

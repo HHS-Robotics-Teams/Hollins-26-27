@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.OpModes.Telop;
 
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.conveyor;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.intakeFront;
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.kicker;
+
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.launcher;
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.leftFeedRoller;
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.rightFeedRoller;
+
+
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.turret;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.INTAKE_FEED_ROLLERS;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.INTAKE_RUN;
@@ -93,22 +94,16 @@ public class ScrimBot extends OpMode {
             INTAKE_REVERSED = !INTAKE_REVERSED;
         }
 
-        // Control the main intake motor
+        // Control the main intake motor and conveyor
         if (INTAKE_RUN) {
             intakeFront.setPower(INTAKE_REVERSED ? -intake_Power : intake_Power);
+            conveyor.setPower(INTAKE_REVERSED ? -intake_Power : intake_Power);
         } else {
             intakeFront.setPower(0);
+            conveyor.setPower(0);
         }
 
-        if (INTAKE_FEED_ROLLERS) {
-            rightFeedRoller.setPower(INTAKE_REVERSED ? -1 : 1);
-            leftFeedRoller.setPower(INTAKE_REVERSED ? -1 : 1);
-            kicker.setPosition(INTAKE_REVERSED ? 0.0 : 1.0);
-        } else {
-            rightFeedRoller.setPower(0);
-            leftFeedRoller.setPower(0);
-            kicker.setPosition(0.0);
-        }
+
 
 
     }

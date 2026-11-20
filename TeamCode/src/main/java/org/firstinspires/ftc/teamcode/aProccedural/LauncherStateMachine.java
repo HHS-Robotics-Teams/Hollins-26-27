@@ -2,11 +2,10 @@ package org.firstinspires.ftc.teamcode.aProccedural;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.conveyor;
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.counterRoller;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.intakeFront;
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.kicker;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.launcher;
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.leftFeedRoller;
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.rightFeedRoller;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.turret;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.LaunchingPower;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.CounterRollerPower;
@@ -84,14 +83,14 @@ public class LauncherStateMachine {
                 case IDLE:
                     targetVelocity = launcher_Idle_Velocity;
                     intakeFront.setPower(0);
-                    kicker.setPosition(0.0);
+                    conveyor.setPower(0);
+                    //kicker.setPosition(0.0);
                     break;
 
                 case INTAKE:
                     targetVelocity = launcher_Idle_Velocity;
                     double dir = intakeReversed ? -1.0 : 1.0;
                     intakeFront.setPower(dir * intake_Power);
-
                     break;
 
                 // case AIM:
@@ -104,16 +103,20 @@ public class LauncherStateMachine {
 
                 case SPIN_UP:
                     targetVelocity = launcher_Launching_Velocity;
-                    setCounterRollerPower();
-                    kicker.setPosition(0.0);
-                    if (abs(launcher.getVelocity() - targetVelocity) <= launch_Threshold){
-                        setState(State.LAUNCHING);
-                    } 
+                    launcher.setVelocity(targetVelocity);
+                    counterRoller.setPower(1);
+                    conveyor.setPower(0);
+                    //kicker.setPosition(0.0);
+//                    if (abs(launcher.getVelocity() - targetVelocity) <= launch_Threshold){
+//                        setState(State.LAUNCHING);
+//                    }
                     break;
 
                 case LAUNCHING:
-                    kicker.setPosition(1.0);
+                    counterRoller.setPower(1);
+                    //kicker.setPosition(1.0);
                     intakeFront.setPower(intake_Power);
+                    conveyor.setPower(intake_Power);
                     break;
             }
         }
@@ -210,8 +213,8 @@ public class LauncherStateMachine {
     }
 
     public boolean isSpunUp() {
-        return (currentState == State.SPIN_UP || currentState == State.LAUNCHING)
-                && (launcher.getVelocity() >= launcher_Launching_Velocity * 0.9 || stateTimer.seconds() >= spinUpTimeSeconds);
+        return ((currentState == State.SPIN_UP || currentState == State.LAUNCHING)
+                && (abs(launcher.getVelocity() - targetVelocity) <= launch_Threshold ));  //|| stateTimer.seconds() >= spinUpTimeSeconds
     }
 
 }

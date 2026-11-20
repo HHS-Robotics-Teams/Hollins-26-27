@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.aProccedural.Components.turret;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.turret_Backwards_Pos;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.turret_Forward_Pos;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.turret_Left_Pos;
+import static org.firstinspires.ftc.teamcode.aProccedural.Constants.turret_Max_Pos;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.turret_Power;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.turret_Right_Pos;
 
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
  * State Machine to control and test the Turret mechanism's positioning capabilities.
+ * Enforces position limits to prevent moving beyond max bounds.
  */
 public class TurretStateMachine {
 
@@ -23,6 +25,10 @@ public class TurretStateMachine {
         MANUAL
     }
 
+    // Safety Position Limits (-1940 to +690)
+    public static final int TURRET_MIN_LIMIT = Math.min(turret_Max_Pos, turret_Right_Pos); // -1940
+    public static final int TURRET_MAX_LIMIT = Math.max(turret_Max_Pos, turret_Right_Pos); // 690
+
     private State currentState = State.FORWARD;
     private int targetPosition = turret_Forward_Pos;
     private double power = turret_Power;
@@ -31,7 +37,7 @@ public class TurretStateMachine {
 
     public TurretStateMachine() {
         if (turret != null) {
-            turret.setTargetPosition(targetPosition);
+            setTargetPosition(targetPosition);
             turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             turret.setPower(power);
         }
@@ -81,7 +87,8 @@ public class TurretStateMachine {
     }
 
     public void setTargetPosition(int pos) {
-        this.targetPosition = pos;
+        // Enforce safety limits to prevent exceeding max position bounds
+        this.targetPosition = Math.max(TURRET_MIN_LIMIT, Math.min(TURRET_MAX_LIMIT, pos));
         if (currentState != State.MANUAL && currentState != State.FORWARD && currentState != State.LEFT
                 && currentState != State.RIGHT && currentState != State.BACKWARD) {
             this.currentState = State.CUSTOM_TARGET;
@@ -89,8 +96,7 @@ public class TurretStateMachine {
     }
 
     public void adjustTargetPosition(int delta) {
-        this.currentState = State.CUSTOM_TARGET;
-        this.targetPosition += delta;
+        setTargetPosition(this.targetPosition + delta);
     }
 
     public int getTargetPosition() {
@@ -120,15 +126,5 @@ public class TurretStateMachine {
 
     public int getPositionError() {
         return targetPosition - getCurrentPosition();
-    }
-
-    public void resetEncoder() {
-        if (turret != null) {
-            turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            turret.setTargetPosition(0);
-            turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            targetPosition = 0;
-            currentState = State.FORWARD;
-        }
     }
 }

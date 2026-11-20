@@ -52,11 +52,6 @@ public class TurretPositionFinder extends OpMode {
             turretSM.adjustTargetPosition(-25);
         }
 
-        // --- Reset Encoder Zero Position (A / Cross button) ---
-        if (input.cross_A.down() || input.a.down()) {
-            turretSM.resetEncoder();
-        }
-
         // --- Update Hardware ---
         turretSM.update();
 
@@ -66,12 +61,12 @@ public class TurretPositionFinder extends OpMode {
         telemetry.addData("Target Position", turretSM.getTargetPosition());
         telemetry.addData("Position Error", turretSM.getPositionError());
         telemetry.addData("At Target", turretSM.isAtTarget());
+        telemetry.addData("Bounds Limit", "[%d to %d]", TurretStateMachine.TURRET_MIN_LIMIT, TurretStateMachine.TURRET_MAX_LIMIT);
         telemetry.addLine();
         telemetry.addData("=== CONTROLS ===", "");
         telemetry.addData("Presets", "D-Pad Up (Forward), Left, Right, Down (Backward)");
         telemetry.addData("Fine Adjust (+/-5)", "Bumpers (RB / LB)");
         telemetry.addData("Coarse Adjust (+/-25)", "Triggers (RT / LT)");
-        telemetry.addData("Reset Encoder", "A / Cross");
         telemetry.update();
     }
 }
