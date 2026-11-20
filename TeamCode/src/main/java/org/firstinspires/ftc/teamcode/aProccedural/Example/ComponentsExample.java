@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.aProccedural.Example;
 
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -36,12 +37,12 @@ public class ComponentsExample {
         //Initialize Drive Motors
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
-        leftBack = hardwareMap.get(DcMotor.class, "leftBack");
-        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+        //leftBack = hardwareMap.get(DcMotor.class, "leftBack");
+        //rightBack = hardwareMap.get(DcMotor.class, "rightBack");
 
         // Initialize Arm Motors
-        claw_tilt = hardwareMap.get(DcMotor.class,"ClawTilt");
-        arm_tilt = hardwareMap.get(DcMotor.class,"ArmTilt");
+        //claw_tilt = hardwareMap.get(DcMotor.class,"ClawTilt");
+        //arm_tilt = hardwareMap.get(DcMotor.class,"ArmTilt");
 
         //Initialize Servos
         pincer_left = hardwareMap.get(Servo.class,"PincerLeft");
@@ -49,12 +50,13 @@ public class ComponentsExample {
         //Drive Motor Settings
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        //leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Arm Motor Settings
-        claw_tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm_tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //claw_tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //arm_tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
 

@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.OpModes.Telop;
 import static org.firstinspires.ftc.teamcode.aProccedural.Example.ComponentsExample.arm_tilt;
 import static org.firstinspires.ftc.teamcode.aProccedural.Example.ComponentsExample.claw_tilt;
 import static org.firstinspires.ftc.teamcode.aProccedural.Example.ComponentsExample.leftBack;
+import static org.firstinspires.ftc.teamcode.aProccedural.Example.ComponentsExample.leftFront;
 import static org.firstinspires.ftc.teamcode.aProccedural.Example.ComponentsExample.pincer_left;
 import static org.firstinspires.ftc.teamcode.aProccedural.Example.ComponentsExample.rightBack;
+import static org.firstinspires.ftc.teamcode.aProccedural.Example.ComponentsExample.rightFront;
 import static org.firstinspires.ftc.teamcode.aProccedural.Example.ConstantsExample.ClawInterval;
 import static org.firstinspires.ftc.teamcode.aProccedural.Example.ConstantsExample.TiltInterval;
 import static org.firstinspires.ftc.teamcode.aProccedural.Example.ConstantsExample.clawtiltdroppos;
@@ -44,18 +46,18 @@ public class TelopExample extends OpMode {
 
             //tagHelper = new AprilTagHelper(hardwareMap, "Webcam");
 
-            pincer_left.setPosition(pincerleftopen);
-            arm_tilt.setTargetPosition(tiltminpos);
-            claw_tilt.setTargetPosition(0);
-
-            claw_tilt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            arm_tilt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-            claw_tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            arm_tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            arm_tilt.setPower(.3);
-            claw_tilt.setPower(.5);
+//            pincer_left.setPosition(pincerleftopen);
+//            arm_tilt.setTargetPosition(tiltminpos);
+//            claw_tilt.setTargetPosition(0);
+//
+//            claw_tilt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            arm_tilt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//            claw_tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            arm_tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//            arm_tilt.setPower(.3);
+//            claw_tilt.setPower(.5);
 
 
 
@@ -91,50 +93,50 @@ public class TelopExample extends OpMode {
             double rightPower = forwardPower - turnPower;
 
             // Set power to motors
-            leftBack.setPower(leftPower);
-            rightBack.setPower(rightPower);
+            leftFront.setPower(leftPower);
+            rightFront.setPower(rightPower);
 
             //Home Position
-            if (input.start.down()) {
-                claw_tilt.setTargetPosition(clawtiltmaxpos);
-                arm_tilt.setTargetPosition(tiltminpos);
-                claw_tilt.setTargetPosition(clawtiltstartpos);
-                pincer_left.setPosition(pincerleftopen);
-            }
-            //Manual arm tilt
-            if (input.dpad_up.down() && (arm_tilt.getCurrentPosition() <= tiltmaxpos)){
-                arm_tilt.setTargetPosition(arm_tilt.getCurrentPosition() + TiltInterval);
-            }
-            if (input.dpad_down.down() && (arm_tilt.getCurrentPosition() >= tiltminpos)){
-                arm_tilt.setTargetPosition(arm_tilt.getCurrentPosition() - TiltInterval);
-            }
-            //Manual Claw Tilt
-            if (input.left_bumper.down() && (claw_tilt.getCurrentPosition() <= clawtiltmaxpos )){
-                claw_tilt.setTargetPosition(claw_tilt.getCurrentPosition() + ClawInterval);
-            }
-            if (input.left_trigger.down() && (claw_tilt.getCurrentPosition() >= clawtiltdroppos)){
-                claw_tilt.setTargetPosition(claw_tilt.getCurrentPosition() - ClawInterval);
-            }
-            // Claw
-            if (input.right_trigger.down()){
-                pincer_left.setPosition(pincerleftclosed);
-            }
-            if (input.right_bumper.down()){
-                pincer_left.setPosition(pincerleftopen);
-            }
-            //Pickup Position
-            if (input.a.down()) {
-                claw_tilt.setTargetPosition(clawtiltmaxpos);
-                arm_tilt.setTargetPosition(tiltpickuppos);
-                claw_tilt.setTargetPosition(clawtiltpickuppos);
-                pincer_left.setPosition(pincerleftopen);
-                clawTiltTimer.reset();
-            }
-            //Drop Position
-            if (input.b.down()){
-                arm_tilt.setTargetPosition(tiltdroppos);
-                claw_tilt.setTargetPosition(clawtiltdroppos);
-            }
+//            if (input.start.down()) {
+//                claw_tilt.setTargetPosition(clawtiltmaxpos);
+//                arm_tilt.setTargetPosition(tiltminpos);
+//                claw_tilt.setTargetPosition(clawtiltstartpos);
+//                pincer_left.setPosition(pincerleftopen);
+//            }
+//            //Manual arm tilt
+//            if (input.dpad_up.down() && (arm_tilt.getCurrentPosition() <= tiltmaxpos)){
+//                arm_tilt.setTargetPosition(arm_tilt.getCurrentPosition() + TiltInterval);
+//            }
+//            if (input.dpad_down.down() && (arm_tilt.getCurrentPosition() >= tiltminpos)){
+//                arm_tilt.setTargetPosition(arm_tilt.getCurrentPosition() - TiltInterval);
+//            }
+//            //Manual Claw Tilt
+//            if (input.left_bumper.down() && (claw_tilt.getCurrentPosition() <= clawtiltmaxpos )){
+//                claw_tilt.setTargetPosition(claw_tilt.getCurrentPosition() + ClawInterval);
+//            }
+//            if (input.left_trigger.down() && (claw_tilt.getCurrentPosition() >= clawtiltdroppos)){
+//                claw_tilt.setTargetPosition(claw_tilt.getCurrentPosition() - ClawInterval);
+//            }
+//            // Claw
+//            if (input.right_trigger.down()){
+//                pincer_left.setPosition(pincerleftclosed);
+//            }
+//            if (input.right_bumper.down()){
+//                pincer_left.setPosition(pincerleftopen);
+//            }
+//            //Pickup Position
+//            if (input.a.down()) {
+//                claw_tilt.setTargetPosition(clawtiltmaxpos);
+//                arm_tilt.setTargetPosition(tiltpickuppos);
+//                claw_tilt.setTargetPosition(clawtiltpickuppos);
+//                pincer_left.setPosition(pincerleftopen);
+//                clawTiltTimer.reset();
+//            }
+//            //Drop Position
+//            if (input.b.down()){
+//                arm_tilt.setTargetPosition(tiltdroppos);
+//                claw_tilt.setTargetPosition(clawtiltdroppos);
+//            }
 
 
             // --- AprilTag Detection ---

@@ -28,6 +28,8 @@ allprojects {
         mavenCentral()
         google()
     }
+    // Redirect build output directory outside OneDrive to prevent file-locking AccessDeniedExceptions
+    layout.buildDirectory.set(file("${System.getProperty('user.home')}/.ftc_builds/Hollins-26-27/${project.name}"))
 }
 
 repositories {
