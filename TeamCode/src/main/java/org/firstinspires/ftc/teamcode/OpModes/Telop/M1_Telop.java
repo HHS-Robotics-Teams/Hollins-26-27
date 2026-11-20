@@ -83,7 +83,7 @@ public class M1_Telop extends OpMode {
         telemetry.addData("Intake Power",intakeFront.getPower());
         telemetry.addData("intake Running", INTAKE_RUN);
 
-        // Spindexer
+        // Launcher
         if (input.left_bumper.down()) {
             adjustSpeed -= adjustIncrement;
         }
@@ -113,7 +113,7 @@ public class M1_Telop extends OpMode {
         }
         if (input.x.up()) {
             spindexer.setPower(0);
-            launcher.setPower(0);
+            launcher.setVelocity(0);
             counterRoller.setPower(0);
             telemetry.addData("x unpressed?", input.x.up());
             telemetry.addData("motor power ", spindexer.getPower());

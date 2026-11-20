@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.aProccedural;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -14,7 +15,7 @@ public class Components {
     public static DcMotor intakeFront;
     public static DcMotor intakeRear;
     public static DcMotor spindexer;
-    public static DcMotor launcher;
+    public static DcMotorEx launcher;
     public static Servo flowerFront;
     public static Servo shootingServo;
     public static CRServo counterRoller;
@@ -41,7 +42,7 @@ public class Components {
         spindexer.setDirection(DcMotorSimple.Direction.FORWARD);
         spindexer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        launcher = hardwareMap.get(DcMotor.class,"launcher");
+        launcher = hardwareMap.get(DcMotorEx.class,"launcher");
         launcher.setDirection(DcMotorSimple.Direction.FORWARD);
         launcher.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 

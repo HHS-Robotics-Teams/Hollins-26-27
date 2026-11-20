@@ -17,6 +17,7 @@ import androidx.core.view.KeyEventDispatcher;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
 import org.firstinspires.ftc.teamcode.aProccedural.Components;
@@ -30,10 +31,11 @@ public class spindexerTest extends OpMode {
     private Input input;
 
     // Spindexer
-    private static double adjustSpeed = -0.75;
-    private double adjustIncrement = 0.05;
+    private static double adjustSpeed = 1400;
+    private double adjustIncrement = 100;
     private double ticksPerRev = spindexer.getMotorType().getTicksPerRev();
     private int ticks90 = (int) Math.round(90/360*ticksPerRev);
+    public static ElapsedTime elapsedTime = new ElapsedTime();
 
     @Override
     public void init() {
@@ -94,14 +96,13 @@ public class spindexerTest extends OpMode {
     }
 
     public static void spinTheDexerLikeCrazy() {
-        launcher.setPower(1);
-        counterRoller.setPower(0.9);
-        try {
-            sleep(2000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+        launcher.setVelocity(adjustSpeed);
+        counterRoller.setPower(1);
+        elapsedTime.reset();
+
+        while (elapsedTime.seconds() < 1.5) {
         }
-        spindexer.setPower(adjustSpeed);
+        spindexer.setPower(-1);
     }
 
     public void resetSpinDexer()
