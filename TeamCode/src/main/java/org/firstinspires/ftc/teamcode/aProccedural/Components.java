@@ -21,8 +21,9 @@ public class Components {
             //public static CRServo rightFeedRoller;
             //public static Servo kicker;
             public static CRServo counterRoller;
-            public static CRServo intakeLift;
-            public static CRServo depollenator;
+            public static Servo intakeLift;
+            public static Servo depollenatorLeft;
+            public static Servo depollenatorRight;
 
             public static void initComponents(HardwareMap hardwareMap) {
                 //Initialize Drive Motors
@@ -69,9 +70,9 @@ public class Components {
                 counterRoller = hardwareMap.get(CRServo.class, "counterRoller");
                 counterRoller.setDirection(DcMotorSimple.Direction.FORWARD);
 
-                intakeLift = hardwareMap.get(CRServo.class, "intakeLift");
-
-                depollenator = hardwareMap.get(CRServo.class,"depollenator");
+                intakeLift = hardwareMap.get(Servo.class, "intakeLift");
+                depollenatorLeft = hardwareMap.get(Servo.class, "depollenatorLeft");
+                depollenatorRight = hardwareMap.get(Servo.class, "depollenatorRight");
 
 
             }

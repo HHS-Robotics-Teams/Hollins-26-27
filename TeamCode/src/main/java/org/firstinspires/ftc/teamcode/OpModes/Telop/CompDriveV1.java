@@ -1,16 +1,20 @@
 package org.firstinspires.ftc.teamcode.OpModes.Telop;
 
-import static org.firstinspires.ftc.teamcode.aProccedural.Components.depollenator;
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.depollenatorLeft;
+import static org.firstinspires.ftc.teamcode.aProccedural.Components.depollenatorRight;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.intakeLift;
 import static org.firstinspires.ftc.teamcode.aProccedural.Components.launcher;
-import static org.firstinspires.ftc.teamcode.aProccedural.Constants.DePollenator_time;
-import static org.firstinspires.ftc.teamcode.aProccedural.Constants.IntakeMove_time;
+import static org.firstinspires.ftc.teamcode.aProccedural.Constants.depollenatorleft_high;
+import static org.firstinspires.ftc.teamcode.aProccedural.Constants.depollenatorleft_low;
+import static org.firstinspires.ftc.teamcode.aProccedural.Constants.depollenatorright_high;
+import static org.firstinspires.ftc.teamcode.aProccedural.Constants.depollenatorright_low;
+import static org.firstinspires.ftc.teamcode.aProccedural.Constants.intake_high;
+import static org.firstinspires.ftc.teamcode.aProccedural.Constants.intake_low;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.reset_Motors;
 import static org.firstinspires.ftc.teamcode.aProccedural.Constants.spinUpTime;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Util.TeleOpDrive;
 import org.firstinspires.ftc.teamcode.aProccedural.Components;
@@ -26,12 +30,7 @@ public class CompDriveV1 extends OpMode {
     private TurretStateMachine turretSM;
 
     private boolean intakeLiftUp = false;
-    private final ElapsedTime intakeLiftTimer = new ElapsedTime();
-    private double intakeLiftTargetPower = 0.0;
-
     private boolean depollenatorExtended = false;
-    private final ElapsedTime depollenatorTimer = new ElapsedTime();
-    private double depollenatorTargetPower = 0.0;
 
     @Override
     public void init() {
@@ -41,9 +40,6 @@ public class CompDriveV1 extends OpMode {
         input = new Input();
         launcherSM = new LauncherStateMachine();
         turretSM = new TurretStateMachine();
-
-        depollenatorTimer.reset();
-        intakeLiftTimer.reset();
     }
 
     @Override
@@ -64,44 +60,28 @@ public class CompDriveV1 extends OpMode {
             turretSM.setState(TurretStateMachine.State.BACKWARD);
         }
 
-//        // --- Turret Fine Adjustments (Bumpers: bounded between min/max limit) ---
-//        if (input.left_bumper.held()) {
-//            turretSM.adjustTargetPosition(-10);
-//        } else if (input.right_bumper.held()) {
-//            turretSM.adjustTargetPosition(10);
-//        }
-
         // Keep Launcher state machine informed of active target position
         launcherSM.setTurretTargetPosition(turretSM.getTargetPosition());
 
-        // --- Intake Lift Toggle (Square / X button) ---
+        // --- Intake Lift Toggle (Left Bumper) ---
         if (input.left_bumper.down()) {
             intakeLiftUp = !intakeLiftUp;
-            intakeLiftTargetPower = intakeLiftUp ? 1.0 : -1.0;
-            intakeLiftTimer.reset();
         }
 
         if (intakeLift != null) {
-            if (intakeLiftTimer.seconds() < IntakeMove_time) {
-                intakeLift.setPower(intakeLiftTargetPower);
-            } else {
-                intakeLift.setPower(0.0);
-            }
+            intakeLift.setPosition(intakeLiftUp ? intake_high : intake_low);
         }
 
-        // --- Depollenator Toggle (Delta / Y button) ---
-        if (input.right_bumper.down() ) {
+        // --- Depollenator Toggle (Right Bumper) ---
+        if (input.right_bumper.down()) {
             depollenatorExtended = !depollenatorExtended;
-            depollenatorTargetPower = depollenatorExtended ? 1.0 : -1.0;
-            depollenatorTimer.reset();
         }
 
-        if (depollenator != null) {
-            if (depollenatorTimer.seconds() < DePollenator_time) {
-                depollenator.setPower(depollenatorTargetPower);
-            } else {
-                depollenator.setPower(0.0);
-            }
+        if (depollenatorLeft != null) {
+            depollenatorLeft.setPosition(depollenatorExtended ? depollenatorleft_high : depollenatorleft_low);
+        }
+        if (depollenatorRight != null) {
+            depollenatorRight.setPosition(depollenatorExtended ? depollenatorright_high : depollenatorright_low);
         }
 
         // --- Toggle Intake Direction ---
@@ -137,10 +117,11 @@ public class CompDriveV1 extends OpMode {
         telemetry.addData("Turret Target Pos", turretSM.getTargetPosition());
         telemetry.addData("Turret Current Pos", turretSM.getCurrentPosition());
         telemetry.addData("Turret Bounds", "[%d to %d]", TurretStateMachine.TURRET_MIN_LIMIT, TurretStateMachine.TURRET_MAX_LIMIT);
-        telemetry.addData("Intake Lift Up", intakeLiftUp);
-        telemetry.addData("Intake Lift Power", intakeLift != null ? intakeLift.getPower() : 0);
+        telemetry.addData("Intake Lift High", intakeLiftUp);
+        telemetry.addData("Intake Lift Pos", intakeLift != null ? intakeLift.getPosition() : 0);
         telemetry.addData("Depollenator Extended", depollenatorExtended);
-        telemetry.addData("Depollenator Power", depollenator != null ? depollenator.getPower() : 0);
+        telemetry.addData("Depollenator Left Pos", depollenatorLeft != null ? depollenatorLeft.getPosition() : 0);
+        telemetry.addData("Depollenator Right Pos", depollenatorRight != null ? depollenatorRight.getPosition() : 0);
         telemetry.addData("Intake Reversed", launcherSM.isIntakeReversed());
         telemetry.addData("Launcher Velocity", launcher.getVelocity());
         telemetry.addData("Spin up Timer", spinUpTime.seconds());

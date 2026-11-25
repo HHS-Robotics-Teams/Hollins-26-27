@@ -28,6 +28,15 @@ public class Constants {
     public static int turret_Forward_Pos = 0;
     public static int turret_Backwards_Pos = -1375;
     public static int turret_Max_Pos = -1940;
+    public static double intake_low = 0.410;
+    public static double intake_high = 0.750;
+
+    public static double depollenatorleft_low = 0.1;
+    public static double depollenatorleft_high = 0.890;
+    public static double depollenatorright_low = 0.1;
+    public static double depollenatorright_high = 0.890;
+
+
     //Flags
     public static boolean LAUNCHING = false;
     public static boolean INTAKE_REVERSED = false;
