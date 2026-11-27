@@ -12,9 +12,9 @@ public class Constants {
     public static double launch_Threshold = 50;
 
     // Launcher Custom PIDF Coefficients
-    public static double launcher_kP = 0.002402; // Do not change 0.0008
+    public static double launcher_kP = 0.002405; // Do not change 0.0008
     public static double launcher_kI = 0.000000; // Do not change 0.0001
-    public static double launcher_kD = 0.000030; // Do not change 0.000080
+    public static double launcher_kD = 0.000035; // Do not change 0.000080
     public static double launcher_kF = 0.000422; // Do not change 0.000420
 
     public static double turret_Power = 0.5;
@@ -46,8 +46,12 @@ public class Constants {
     public static double CounterRollerPower;
 
     public static double DePollenator_time = 1.72;
-
     public static double IntakeMove_time = 1.00;
+
+    // Volley Launch Sequence Timings (seconds)
+    public static double volley1_Duration = 0.750;
+    public static double volley_Pause_Duration = 0.05;
+    public static double volley2_Duration = 0.750;
 
     public static ElapsedTime spinUpTime = new ElapsedTime();
 

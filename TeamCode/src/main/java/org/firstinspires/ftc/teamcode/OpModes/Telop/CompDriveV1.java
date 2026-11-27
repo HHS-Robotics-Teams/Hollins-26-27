@@ -29,8 +29,8 @@ public class CompDriveV1 extends OpMode {
     private LauncherStateMachine launcherSM;
     private TurretStateMachine turretSM;
 
-    private boolean intakeLiftUp = false;
-    private boolean depollenatorExtended = false;
+    private boolean intakeLiftUp ;
+    private boolean depollenatorExtended ;
 
     @Override
     public void init() {
@@ -40,6 +40,11 @@ public class CompDriveV1 extends OpMode {
         input = new Input();
         launcherSM = new LauncherStateMachine();
         turretSM = new TurretStateMachine();
+    }
+    @Override
+    public void start() {
+        intakeLiftUp = true;
+        depollenatorExtended = true;
     }
 
     @Override
@@ -89,20 +94,16 @@ public class CompDriveV1 extends OpMode {
             launcherSM.toggleIntakeReversed();
         }
 
-        // --- Mechanism State Machine Control ---
-        if (input.right_trigger.held()) {
-            // Right Trigger -> Spin up flywheel first, then feed/launch
-            if (!launcherSM.isSpunUp()) {
-                launcherSM.spinUp();
-                spinUpTime.reset();
-            } else {
-                launcherSM.launch();
-            }
-        } else if (input.left_trigger.held()) {
-            // Left Trigger -> Intake mode
+        // --- Mechanism State Machine Control (2-Volley Launch Sequence) ---
+        if (input.right_trigger.down()) {
+            // Right Trigger Press -> Triggers 2-volley launch sequence
+            launcherSM.startVolleySequence();
+            spinUpTime.reset();
+        } else if (input.left_trigger.held() && !launcherSM.isVolleySequenceActive()) {
+            // Left Trigger -> Intake mode (active when not launching volleys)
             launcherSM.intake();
-        } else {
-            // Default -> Return to Idle state
+        } else if (!launcherSM.isVolleySequenceActive()) {
+            // Default -> Return to Idle state when not launching or intaking
             launcherSM.idle();
         }
 
@@ -113,6 +114,7 @@ public class CompDriveV1 extends OpMode {
         // --- Driver Telemetry ---
         telemetry.addData("Launcher State", launcherSM.getState());
         telemetry.addData("Turret State", turretSM.getState());
+        telemetry.addData("Volley Sequence Active", launcherSM.isVolleySequenceActive());
         telemetry.addData("Spun Up", launcherSM.isSpunUp());
         telemetry.addData("Turret Target Pos", turretSM.getTargetPosition());
         telemetry.addData("Turret Current Pos", turretSM.getCurrentPosition());
