@@ -91,6 +91,11 @@ public class LauncherStateMachine {
                     targetVelocity = launcher_Idle_Velocity;
                     double dir = intakeReversed ? -1.0 : 1.0;
                     intakeFront.setPower(dir * intake_Power);
+                    if (intakeReversed){
+                        conveyor.setPower(dir * intake_Power);
+                    } else {
+                        conveyor.setPower(0);
+                    }
                     break;
 
                 // case AIM:
